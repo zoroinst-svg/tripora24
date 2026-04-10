@@ -116,14 +116,14 @@ function LocationInput({
 
   return (
     <div ref={ref} className="relative flex-1 min-w-0">
-      <span className="text-[11px] text-muted-foreground font-medium">{label}</span>
+      <span className="text-[11px] text-muted-foreground font-medium block">{label}</span>
       <input
         value={query}
         onChange={(e) => { setQuery(e.target.value); setResults(smartSearch(e.target.value, isDestination)); setActivePopup(id) }}
         onFocus={handleFocus}
         onBlur={() => setTimeout(() => { if (activePopup === id) setActivePopup(null) }, 200)}
         placeholder={placeholder}
-        className="block w-full bg-transparent outline-none text-[15px] font-semibold placeholder:text-muted-foreground/50 placeholder:font-normal truncate"
+        className="block w-full bg-transparent outline-none text-[15px] font-semibold text-foreground placeholder:text-muted-foreground/50 placeholder:font-normal truncate"
       />
       <DropdownPortal anchorRef={ref} open={open && results.length > 0} width={340}>
         {!query && (
@@ -316,8 +316,8 @@ function DatePicker({
   return (
     <div ref={ref} className="relative flex-1 min-w-0">
       <div className="cursor-pointer" onClick={() => setActivePopup(open ? null : id)}>
-        <span className="text-[11px] text-muted-foreground font-medium">{label}</span>
-        <div className="text-[15px] font-semibold truncate">
+        <span className="text-[11px] text-muted-foreground font-medium block">{label}</span>
+        <div className="text-[15px] font-semibold truncate text-foreground">
           {display || <span className="text-muted-foreground/50 font-normal">{placeholder}</span>}
         </div>
       </div>
@@ -403,8 +403,8 @@ function PassengerSelector({ id, value, cabinClass, onChange, onClassChange }: {
   return (
     <div ref={ref} className="relative flex-1 min-w-0">
       <div className="cursor-pointer" onClick={() => setActivePopup(open ? null : id)}>
-        <span className="text-[11px] text-muted-foreground font-medium">Reisende & Kabinenklasse</span>
-        <div className="text-[15px] font-semibold truncate">
+        <span className="text-[11px] text-muted-foreground font-medium block">Reisende & Kabinenklasse</span>
+        <div className="text-[15px] font-semibold truncate text-foreground">
           {value} {value === 1 ? "Erwachsener" : "Erwachsene"}, {cabinClass}
         </div>
       </div>
@@ -543,7 +543,7 @@ export function SearchHero() {
           )}
 
           {/* SEARCH BAR */}
-          <div className="bg-white dark:bg-card rounded-2xl shadow-2xl" data-search-bar>
+          <div className="bg-white dark:bg-card text-foreground rounded-2xl shadow-2xl" data-search-bar>
             <div className="flex flex-col md:flex-row items-stretch">
               {/* Von */}
               <div className="relative flex-1 px-5 py-3 border-b md:border-b-0 md:border-r border-border min-w-0">

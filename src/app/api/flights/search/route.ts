@@ -34,14 +34,24 @@ export async function GET(request: NextRequest) {
     let allFlights: Awaited<ReturnType<typeof getCheapFlightsV1>> = []
 
     if (isSpecificRoute) {
-      // Specific route like FRA→PMI: use BOTH V1 (return dates) + V3 (more options)
-      const [v1, v3] = await Promise.all([
-        getCheapFlightsV1({ origin, destination, departureMonth: dep, returnMonth: ret }).catch(() => []),
-        getCheapestFlights({ origin, destination, departureAt: dep, returnAt: ret }).catch(() => []),
-      ])
-      allFlights = [...v1, ...v3]
+      // Specific route: Use V3 ONLY (gives many options) + try variations
+      // Call V3 multiple times for different month variations to maximize results
+      const months = []
+      const now = new Date()
+      for (let i = 0; i < 6; i++) {
+        const d = new Date(now.getFullYear(), now.getMonth() + i, 1)
+        months.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`)
+      }
+
+      const targetMonths = dep ? [dep] : months.slice(0, 3)
+
+      const searches = targetMonths.map((m) =>
+        getCheapestFlights({ origin, destination, departureAt: m, returnAt: ret }).catch(() => [])
+      )
+      const results = await Promise.all(searches)
+      allFlights = results.flat()
     } else {
-      // Country/everywhere search: V1 is fast (one call = all destinations)
+      // Country/everywhere: V1 cheap (one call = all destinations cheapest)
       const searches = originAirports.slice(0, isEverywhere ? 5 : 8).map((orig) =>
         getCheapFlightsV1({
           origin: orig,
@@ -50,10 +60,19 @@ export async function GET(request: NextRequest) {
           returnMonth: ret,
         }).catch(() => [])
       )
+
+      // Also fetch V3 for top destinations to get more variety
+      if (destination && !isEverywhere && !isCountryCode(destination)) {
+        searches.push(
+          ...originAirports.slice(0, 3).map((orig) =>
+            getCheapestFlights({ origin: orig, destination, departureAt: dep, returnAt: ret }).catch(() => [])
+          )
+        )
+      }
+
       const results = await Promise.all(searches)
       allFlights = results.flat()
 
-      // Filter to country if needed
       if (isCountryCode(destination)) {
         const destAirports = new Set(getAirportsForCountry(destination))
         allFlights = allFlights.filter(f => destAirports.has(f.destination))
@@ -61,14 +80,15 @@ export async function GET(request: NextRequest) {
     }
 
     if (allFlights.length > 0) {
+      // Sort by price, dedupe by departure_at + price + airline (allows same-day different times)
       const sorted = allFlights.sort((a, b) => a.price - b.price)
       const seen = new Set<string>()
       const unique = sorted.filter((f) => {
-        const key = `${f.origin}-${f.destination}-${f.departureDate}-${f.price}`
+        const key = `${f.origin}-${f.destination}-${f.departureDate}-${f.departureTime || ""}-${f.airline}-${f.price}`
         if (seen.has(key)) return false
         seen.add(key)
         return true
-      }).slice(0, 100)
+      }).slice(0, 200) // Up to 200 results for specific routes
 
       return NextResponse.json({ results: unique, count: unique.length, source: "travelpayouts" })
     }

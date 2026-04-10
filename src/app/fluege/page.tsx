@@ -485,16 +485,21 @@ function FlightSearchContent() {
     setLoading(true); setError(null)
     try {
       const params = new URLSearchParams()
-      params.set("origin", from)
-      if (selectedCountry && !selectedCity) params.set("destination", selectedCountry.code)
-      else if (selectedCity) params.set("destination", selectedCity.code)
+      // If specific airport selected, use it directly (gives more options for that route)
+      if (selectedAirport && selectedCity) {
+        params.set("origin", selectedAirport.code)
+        params.set("destination", selectedCity.code)
+      } else {
+        params.set("origin", from)
+        if (selectedCountry && !selectedCity) params.set("destination", selectedCountry.code)
+        else if (selectedCity) params.set("destination", selectedCity.code)
+      }
       if (dep) params.set("dep", dep)
       if (ret) params.set("ret", ret)
 
       const res = await fetch(`/api/flights/search?${params}`, { signal: controller.signal })
       if (!res.ok) throw new Error("API error")
       const data = await res.json()
-      // Only update if this request wasn't aborted
       if (!controller.signal.aborted) {
         setFlights(data.results || [])
       }
@@ -505,12 +510,12 @@ function FlightSearchContent() {
     } finally {
       if (!controller.signal.aborted) setLoading(false)
     }
-  }, [from, selectedCountry, selectedCity, dep, ret])
+  }, [from, selectedCountry, selectedCity, selectedAirport, dep, ret])
 
   useEffect(() => {
     if (from) doSearch()
     return () => abortRef.current?.abort()
-  }, [from, selectedCountry?.code, selectedCity?.code, dep]) // eslint-disable-line
+  }, [from, selectedCountry?.code, selectedCity?.code, selectedAirport?.code, dep]) // eslint-disable-line
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-5xl">
@@ -540,10 +545,10 @@ function FlightSearchContent() {
         </div>
       )}
 
-      {/* STEP 4: Airport selected → flight offers (filtered by departure airport) */}
+      {/* STEP 4: Airport selected → flight offers (re-fetched from API) */}
       {!loading && !error && from && selectedCity && selectedAirport && (
         <FlightOffers
-          flights={flights.filter(f => f.origin === selectedAirport.code)}
+          flights={flights}
           destCode={selectedCity.code}
           destName={selectedCity.name}
           month={dep}

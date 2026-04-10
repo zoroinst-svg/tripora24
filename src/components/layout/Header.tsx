@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useState } from "react"
-import { HelpCircle, Globe, Heart, User, Menu, X } from "lucide-react"
+import { HelpCircle, Heart, User, Menu, X, BookOpen } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "./ThemeToggle"
 
@@ -25,22 +25,31 @@ export function Header() {
         </Link>
 
         {/* Right side */}
-        <div className="hidden md:flex items-center gap-2">
-          <Button variant="ghost" size="sm" className="text-white/80 hover:text-white hover:bg-white/10 gap-2">
-            <HelpCircle className="h-4 w-4" />
-            Hilfe
-          </Button>
-          <Button variant="ghost" size="icon" className="text-white/80 hover:text-white hover:bg-white/10">
-            <Globe className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="icon" className="text-white/80 hover:text-white hover:bg-white/10">
-            <Heart className="h-4 w-4" />
-          </Button>
+        <div className="hidden md:flex items-center gap-1">
+          <Link href="/blog">
+            <Button variant="ghost" size="sm" className="text-white/80 hover:text-white hover:bg-white/10 gap-2">
+              <BookOpen className="h-4 w-4" />
+              Blog
+            </Button>
+          </Link>
+          <Link href="#faq">
+            <Button variant="ghost" size="sm" className="text-white/80 hover:text-white hover:bg-white/10 gap-2">
+              <HelpCircle className="h-4 w-4" />
+              Hilfe
+            </Button>
+          </Link>
+          <Link href="/alerts">
+            <Button variant="ghost" size="icon" className="text-white/80 hover:text-white hover:bg-white/10" title="Preis-Alerts">
+              <Heart className="h-4 w-4" />
+            </Button>
+          </Link>
           <ThemeToggle />
-          <Button variant="ghost" size="sm" className="text-white/80 hover:text-white hover:bg-white/10 gap-2">
-            <User className="h-4 w-4" />
-            Anmelden
-          </Button>
+          <Link href="/profil">
+            <Button variant="ghost" size="sm" className="text-white/80 hover:text-white hover:bg-white/10 gap-2">
+              <User className="h-4 w-4" />
+              Anmelden
+            </Button>
+          </Link>
         </div>
 
         {/* Mobile Menu Toggle */}
@@ -72,9 +81,11 @@ export function Header() {
               <Button variant="ghost" className="w-full justify-start text-white hover:bg-white/10">Preis-Alerts</Button>
             </Link>
             <div className="border-t border-white/10 my-2" />
-            <Button variant="ghost" className="w-full justify-start text-white hover:bg-white/10 gap-2">
-              <User className="h-4 w-4" /> Anmelden
-            </Button>
+            <Link href="/profil" onClick={() => setMobileMenuOpen(false)}>
+              <Button variant="ghost" className="w-full justify-start text-white hover:bg-white/10 gap-2">
+                <User className="h-4 w-4" /> Anmelden
+              </Button>
+            </Link>
           </nav>
         </div>
       )}

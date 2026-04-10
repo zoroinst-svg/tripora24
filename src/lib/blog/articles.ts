@@ -17,7 +17,7 @@ export const ARTICLES: BlogArticle[] = [
     category: "Spartipps",
     readTime: "5 Min",
     publishedAt: "2026-04-09",
-    image: "https://images.unsplash.com/photo-1436491865332-7a61a109db05?w=1200&h=600&fit=crop",
+    image: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&h=600&fit=crop",
     content: [
       { type: "p", text: "Wer günstig reisen will, muss nicht auf Komfort verzichten. Mit den richtigen Tricks findest du Flüge, die andere Reisende übersehen — und das oft für die Hälfte des Normalpreises. Wir zeigen dir die 7 wichtigsten Profi-Strategien." },
       { type: "h2", text: "1. Flexibel bei Datum und Flughafen sein" },
@@ -51,7 +51,7 @@ export const ARTICLES: BlogArticle[] = [
     category: "Reise-Tipps",
     readTime: "7 Min",
     publishedAt: "2026-04-08",
-    image: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&h=600&fit=crop",
+    image: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&h=600&fit=crop",
     content: [
       { type: "p", text: "Das Reisejahr 2026 wird wild — neue Flugrouten, geänderte Visa-Regeln und steigende Preise. Wer schlau plant, spart Zeit, Geld und Nerven. Hier sind die 10 wichtigsten Hacks für entspanntes Reisen." },
       { type: "h2", text: "1. Handgepäck statt Aufgabegepäck" },

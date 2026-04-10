@@ -37,7 +37,7 @@ export function PromoBanner() {
           {/* Image */}
           <div className="relative h-48 md:h-64 rounded-2xl overflow-hidden hidden md:block">
             <img
-              src="https://images.unsplash.com/photo-1488085061387-422e29b40080?w=600&h=400&fit=crop"
+              src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&h=400&fit=crop"
               alt="Reise"
               className="w-full h-full object-cover"
             />

@@ -54,6 +54,10 @@ export async function getCheapestFlights(params: {
   const searchParams = new URLSearchParams({
     origin: params.origin,
     currency: params.currency || "EUR",
+    one_way: "false",
+    direct: "false",
+    sorting: "price",
+    limit: "100",
     token: API_TOKEN,
   })
   if (params.destination) searchParams.set("destination", params.destination)

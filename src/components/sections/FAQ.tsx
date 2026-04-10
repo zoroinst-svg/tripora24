@@ -42,7 +42,7 @@ export function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0)
 
   return (
-    <section className="container mx-auto px-4 py-16">
+    <section id="faq" className="container mx-auto px-4 py-16 scroll-mt-20">
       <div className="max-w-3xl mx-auto">
         <h2 className="text-2xl md:text-3xl font-bold mb-2">Häufige Fragen</h2>
         <p className="text-muted-foreground mb-8">Alles was du über Tripora24 wissen musst</p>
