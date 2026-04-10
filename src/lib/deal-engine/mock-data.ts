@@ -88,9 +88,12 @@ export interface TrendingDeal {
   avgPrice: number
   currency: string
   dealScore: number
-  origin?: string
-  destination: string
-  dates?: string
+  origin?: string // IATA airport code (e.g. "FRA")
+  destination: string // IATA airport code (e.g. "PMI")
+  destinationName?: string // Display name (e.g. "Mallorca")
+  dates?: string // Display string for UI
+  departureDate?: string // YYYY-MM-DD for URL params
+  returnDate?: string // YYYY-MM-DD for URL params
   bookingUrl: string
 }
 

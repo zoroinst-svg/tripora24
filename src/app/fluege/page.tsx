@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation"
 import { Suspense } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { getCountryCode, getCity, getCountryName as getCountryNameFromDB, isKnownCountry, COUNTRY_FLAGS } from "@/lib/data/iata-database"
+import { getCountryCode, getCity, getCountryName as getCountryNameFromDB, isKnownCountry } from "@/lib/data/iata-database"
 import { getCountryImage, getCityImage } from "@/lib/utils/images"
 import type { FlightOffer } from "@/lib/deal-engine/mock-data"
 import { Plane, Search, Loader2, AlertCircle, ArrowRight, ChevronLeft } from "lucide-react"
@@ -65,7 +65,6 @@ function ExploreCountries({ flights, month, onSelectCountry }: {
     .map(([code, data]) => ({
       code,
       name: getCountryNameFromDB(code),
-      flag: COUNTRY_FLAGS[code] || "",
       price: data.price,
       stops: data.stops,
       cityCount: data.cities.size,
@@ -102,7 +101,7 @@ function ExploreCountries({ flights, month, onSelectCountry }: {
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
               <div className="absolute bottom-3 left-3 right-3 text-white">
-                <h3 className="font-bold text-xl drop-shadow-lg">{country.flag} {country.name}</h3>
+                <h3 className="font-bold text-xl drop-shadow-lg">{country.name}</h3>
               </div>
             </div>
             <CardContent className="p-4">

@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Hotel, Search, MapPin, Star, ExternalLink, Loader2, Calendar, ChevronLeft } from "lucide-react"
 import { getCityImage, getCountryImage } from "@/lib/utils/images"
-import { COUNTRY_NAMES, COUNTRY_FLAGS, getAirportsForCountry, getCity } from "@/lib/data/iata-database"
+import { COUNTRY_NAMES, getCity } from "@/lib/data/iata-database"
 
 const POPULAR_COUNTRIES = ["ES", "TR", "GR", "IT", "PT", "HR", "EG", "FR", "GB", "AE", "TH", "DE"]
 
@@ -173,7 +173,7 @@ function HotelSearchContent() {
         </button>
 
         <h1 className="text-3xl font-bold mb-2">
-          Hotels in {COUNTRY_FLAGS[selectedCountry]} {COUNTRY_NAMES[selectedCountry]}
+          Hotels in {COUNTRY_NAMES[selectedCountry]}
         </h1>
         <p className="text-muted-foreground mb-6">Wähle eine Stadt um Hotelangebote zu sehen</p>
 
@@ -252,7 +252,7 @@ function HotelSearchContent() {
               <img src={getCountryImage(cc)} alt={COUNTRY_NAMES[cc]} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
               <div className="absolute bottom-2 left-3 right-3 text-white">
-                <h3 className="font-bold text-base drop-shadow-lg">{COUNTRY_FLAGS[cc]} {COUNTRY_NAMES[cc]}</h3>
+                <h3 className="font-bold text-base drop-shadow-lg">{COUNTRY_NAMES[cc]}</h3>
               </div>
             </div>
           </Card>

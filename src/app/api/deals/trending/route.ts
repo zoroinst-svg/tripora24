@@ -37,8 +37,11 @@ export async function GET() {
             avgPrice: f.avgPrice,
             currency: "EUR",
             dealScore: f.avgPrice > 0 ? Math.round(((f.avgPrice - f.price) / f.avgPrice) * 100) : 0,
-            origin: f.origin,
-            destination: f.destinationCity,
+            origin: f.origin, // IATA code (e.g. "FRA")
+            destination: f.destination, // IATA code (e.g. "PMI") — was destinationCity (display name) before
+            destinationName: f.destinationCity, // Display name (e.g. "Mallorca")
+            departureDate: f.departureDate, // YYYY-MM-DD
+            returnDate: f.returnDate, // YYYY-MM-DD
             dates: f.departureDate && f.returnDate
               ? `${new Date(f.departureDate).toLocaleDateString("de-DE", { day: "numeric", month: "short" })} – ${new Date(f.returnDate).toLocaleDateString("de-DE", { day: "numeric", month: "short" })}`
               : f.departureDate,

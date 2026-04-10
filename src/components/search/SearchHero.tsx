@@ -471,6 +471,22 @@ export function SearchHero() {
     return () => document.removeEventListener("mousedown", handler)
   }, [])
 
+  // Auto-fill return month when departure month is selected (and return is empty)
+  useEffect(() => {
+    if (depFlex && !retFlex && !retDate && tripType === "return") {
+      setRetFlex(depFlex)
+    }
+  }, [depFlex, retFlex, retDate, tripType])
+
+  // Auto-fill return date (+7 days) when departure date selected and return empty
+  useEffect(() => {
+    if (depDate && !retDate && !retFlex && tripType === "return") {
+      const d = new Date(depDate)
+      d.setDate(d.getDate() + 7)
+      setRetDate(d.toISOString().split("T")[0])
+    }
+  }, [depDate, retDate, retFlex, tripType])
+
   const swap = () => {
     const tl = originLabel; const tc = originCode
     setOriginLabel(destLabel); setOriginCode(destCode)

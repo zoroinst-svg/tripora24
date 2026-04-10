@@ -14,6 +14,14 @@ const typeLabels = { flight: "Flug", hotel: "Hotel", package: "Pauschal" }
 export function DealCard({ deal }: { deal: TrendingDeal }) {
   const Icon = typeIcons[deal.type]
 
+  // Build correct URL with actual departure/return dates
+  const params = new URLSearchParams()
+  if (deal.origin) params.set("from", deal.origin)
+  if (deal.destination) params.set("to", deal.destination)
+  if (deal.departureDate) params.set("dep", deal.departureDate)
+  if (deal.returnDate) params.set("ret", deal.returnDate)
+  const dealUrl = `/fluege?${params.toString()}`
+
   return (
     <Card className="overflow-hidden group hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col">
       {/* Image */}
@@ -49,7 +57,7 @@ export function DealCard({ deal }: { deal: TrendingDeal }) {
             <div className="text-xs text-muted-foreground">ab</div>
             <div className="text-2xl font-bold text-primary">~{formatPrice(deal.price)}</div>
           </div>
-          <Link href={`/fluege?from=${deal.origin || "DE"}&to=${deal.destination || ""}`}>
+          <Link href={dealUrl}>
             <Button size="sm" className="gap-1">
               Ansehen <ArrowRight className="h-3 w-3" />
             </Button>
