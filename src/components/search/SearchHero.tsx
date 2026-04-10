@@ -87,6 +87,11 @@ function LocationInput({
   const ref = useRef<HTMLDivElement>(null)
   const open = activePopup === id
 
+  // Sync external displayValue changes (e.g., swap)
+  useEffect(() => {
+    setQuery(displayValue)
+  }, [displayValue])
+
   const handleFocus = () => {
     setResults(smartSearch(query || "", isDestination))
     setActivePopup(id)
@@ -126,9 +131,9 @@ function LocationInput({
             {isDestination ? "Beliebte Reiseziele" : "Abflug von"}
           </div>
         )}
-        {results.map((r, i) => (
+        {results.map((r) => (
           <button
-            key={`${r.type}-${r.code}-${i}`}
+            key={`${r.type}::${r.code}`}
             className="w-full text-left px-4 py-2.5 hover:bg-accent/70 transition-colors flex items-center gap-3 cursor-pointer"
             onMouseDown={(e) => { e.preventDefault(); select(r) }}
           >
@@ -156,13 +161,30 @@ function LocationInput({
 }
 
 // ============================================
-// MINI CALENDAR
+// MINI CALENDAR (with optional day prices)
 // ============================================
-function MiniCalendar({ value, onChange }: { value: string; onChange: (d: string) => void }) {
+function MiniCalendar({ value, onChange, originCode, destCode }: {
+  value: string; onChange: (d: string) => void
+  originCode?: string; destCode?: string
+}) {
   const today = new Date()
   const selected = value ? new Date(value) : null
   const [viewMonth, setViewMonth] = useState(selected ? selected.getMonth() : today.getMonth())
   const [viewYear, setViewYear] = useState(selected ? selected.getFullYear() : today.getFullYear())
+  const [dayPrices, setDayPrices] = useState<Record<string, number>>({})
+  const [loadingPrices, setLoadingPrices] = useState(false)
+
+  // Fetch day prices when route is set
+  useEffect(() => {
+    if (!originCode || !destCode || originCode.length !== 3 || destCode.length !== 3) return
+    const monthKey = `${viewYear}-${String(viewMonth + 1).padStart(2, "0")}`
+    setLoadingPrices(true)
+    fetch(`/api/flights/calendar?origin=${originCode}&destination=${destCode}&month=${monthKey}&mode=month`)
+      .then((r) => r.json())
+      .then((data) => setDayPrices(data.prices || {}))
+      .catch(() => setDayPrices({}))
+      .finally(() => setLoadingPrices(false))
+  }, [originCode, destCode, viewMonth, viewYear])
 
   const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate()
   const firstDayOfWeek = (new Date(viewYear, viewMonth, 1).getDay() + 6) % 7
@@ -180,6 +202,10 @@ function MiniCalendar({ value, onChange }: { value: string; onChange: (d: string
   const isSelected = (day: number) => selected && day === selected.getDate() && viewMonth === selected.getMonth() && viewYear === selected.getFullYear()
   const isToday = (day: number) => day === today.getDate() && viewMonth === today.getMonth() && viewYear === today.getFullYear()
 
+  // Find cheapest price in current month
+  const monthDayKeys = Object.keys(dayPrices).filter(k => k.startsWith(`${viewYear}-${String(viewMonth + 1).padStart(2, "0")}`))
+  const cheapestPrice = monthDayKeys.length > 0 ? Math.min(...monthDayKeys.map(k => dayPrices[k])) : 0
+
   return (
     <div>
       <div className="flex items-center justify-between mb-3">
@@ -187,27 +213,40 @@ function MiniCalendar({ value, onChange }: { value: string; onChange: (d: string
         <span className="text-sm font-semibold">{monthName}</span>
         <button onClick={next} className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center cursor-pointer text-lg">&rsaquo;</button>
       </div>
-      <div className="grid grid-cols-7 gap-0.5 text-center mb-1">
+      <div className="grid grid-cols-7 gap-1 text-center mb-1">
         {weekDays.map((d) => <div key={d} className="text-[10px] font-medium text-muted-foreground py-1">{d}</div>)}
       </div>
-      <div className="grid grid-cols-7 gap-0.5 text-center">
+      <div className="grid grid-cols-7 gap-1 text-center">
         {Array.from({ length: firstDayOfWeek }).map((_, i) => <div key={`e-${i}`} />)}
         {Array.from({ length: daysInMonth }).map((_, i) => {
           const day = i + 1
+          const dateKey = `${viewYear}-${String(viewMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`
+          const price = dayPrices[dateKey]
+          const isCheapest = price && price === cheapestPrice
           return (
             <button
               key={day}
               disabled={isPast(day)}
               onMouseDown={(e) => { e.preventDefault(); selectDay(day) }}
-              className={`w-9 h-9 rounded-full text-sm font-medium transition-colors cursor-pointer
+              className={`flex flex-col items-center justify-center min-h-[44px] rounded-lg text-sm font-medium transition-all cursor-pointer
                 ${isSelected(day) ? "bg-primary text-white" : ""}
                 ${isToday(day) && !isSelected(day) ? "border-2 border-primary text-primary" : ""}
                 ${isPast(day) ? "text-muted-foreground/30 cursor-not-allowed" : "hover:bg-muted"}
               `}
-            >{day}</button>
+            >
+              <span>{day}</span>
+              {price && !isPast(day) && (
+                <span className={`text-[9px] font-semibold ${isCheapest ? "text-emerald-500" : "text-muted-foreground"} ${isSelected(day) ? "text-white/90" : ""}`}>
+                  {price}€
+                </span>
+              )}
+            </button>
           )
         })}
       </div>
+      {loadingPrices && (
+        <p className="text-xs text-muted-foreground text-center mt-3">Preise werden geladen...</p>
+      )}
     </div>
   )
 }
@@ -223,6 +262,8 @@ function DatePicker({
   onChange,
   onFlexChange,
   placeholder,
+  originCode,
+  destCode,
 }: {
   id: string
   label: string
@@ -231,11 +272,14 @@ function DatePicker({
   onChange: (v: string) => void
   onFlexChange: (v: string) => void
   placeholder: string
+  originCode?: string
+  destCode?: string
 }) {
   const { activePopup, setActivePopup } = useContext(PopupContext)
   const [mode, setMode] = useState<"exact" | "flex">("exact")
   const ref = useRef<HTMLDivElement>(null)
   const open = activePopup === id
+  const [monthPrices, setMonthPrices] = useState<Record<string, number>>({})
 
   const months = [] as { value: string; label: string; year: string }[]
   const now = new Date()
@@ -248,11 +292,26 @@ function DatePicker({
     })
   }
 
+  // Fetch month prices in flex mode
+  useEffect(() => {
+    if (mode !== "flex" || !open || !originCode || !destCode || originCode.length !== 3 || destCode.length !== 3) return
+    fetch(`/api/flights/calendar?origin=${originCode}&destination=${destCode}&mode=year`)
+      .then((r) => r.json())
+      .then((data) => setMonthPrices(data.prices || {}))
+      .catch(() => {})
+  }, [mode, open, originCode, destCode])
+
   const display = flexMonth
     ? `${months.find((m) => m.value === flexMonth)?.label || ""} ${months.find((m) => m.value === flexMonth)?.year || ""}`
     : value
       ? new Date(value).toLocaleDateString("de-DE", { day: "numeric", month: "short" })
       : ""
+
+  // Find cheapest month for badge
+  const cheapestMonth = Object.entries(monthPrices).reduce<{ key: string; price: number } | null>((acc, [k, v]) => {
+    if (!acc || v < acc.price) return { key: k, price: v }
+    return acc
+  }, null)
 
   return (
     <div ref={ref} className="relative flex-1 min-w-0">
@@ -263,7 +322,7 @@ function DatePicker({
         </div>
       </div>
 
-      <DropdownPortal anchorRef={ref} open={open} width={360} align="right">
+      <DropdownPortal anchorRef={ref} open={open} width={380} align="right">
         <div className="p-5">
           <div className="flex gap-1 bg-muted rounded-lg p-1 mb-4">
             <button
@@ -276,24 +335,52 @@ function DatePicker({
             >Flexible Reisedaten</button>
           </div>
           {mode === "exact" ? (
-            <MiniCalendar value={value} onChange={(d) => { onChange(d); onFlexChange(""); setActivePopup(null) }} />
+            <MiniCalendar
+              value={value}
+              onChange={(d) => { onChange(d); onFlexChange(""); setActivePopup(null) }}
+              originCode={originCode}
+              destCode={destCode}
+            />
           ) : (
             <div>
-              <div className="text-sm font-semibold mb-3">Monat</div>
+              <div className="text-sm font-semibold mb-3">Monat wählen</div>
               <div className="grid grid-cols-3 gap-2">
-                {months.map((m) => (
-                  <button
-                    key={m.value}
-                    onMouseDown={(e) => { e.preventDefault(); onFlexChange(m.value); onChange(""); setActivePopup(null) }}
-                    className={`px-2 py-3 rounded-xl border-2 text-center cursor-pointer transition-all ${
-                      flexMonth === m.value ? "border-primary bg-primary/10 text-primary" : "border-border hover:border-muted-foreground/30"
-                    }`}
-                  >
-                    <div className="text-[10px] text-muted-foreground">{m.year}</div>
-                    <div className="text-xs font-semibold">{m.label}</div>
-                  </button>
-                ))}
+                {months.map((m) => {
+                  const price = monthPrices[m.value]
+                  const isCheapest = cheapestMonth?.key === m.value
+                  return (
+                    <button
+                      key={m.value}
+                      onMouseDown={(e) => { e.preventDefault(); onFlexChange(m.value); onChange(""); setActivePopup(null) }}
+                      className={`relative px-2 py-3 rounded-xl border-2 text-center cursor-pointer transition-all ${
+                        flexMonth === m.value
+                          ? "border-primary bg-primary/10 text-primary"
+                          : isCheapest
+                          ? "border-emerald-400 bg-emerald-50 dark:bg-emerald-950/30"
+                          : "border-border hover:border-muted-foreground/30"
+                      }`}
+                    >
+                      <div className="text-[10px] text-muted-foreground">{m.year}</div>
+                      <div className="text-xs font-semibold">{m.label}</div>
+                      {price && (
+                        <div className={`text-[11px] font-bold mt-1 ${isCheapest ? "text-emerald-600" : "text-muted-foreground"}`}>
+                          ab {price}€
+                        </div>
+                      )}
+                      {isCheapest && (
+                        <div className="absolute -top-2 left-1/2 -translate-x-1/2 bg-emerald-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap">
+                          Günstigster
+                        </div>
+                      )}
+                    </button>
+                  )
+                })}
               </div>
+              {!originCode || !destCode ? (
+                <p className="text-xs text-muted-foreground mt-4 text-center">Wähle erst ein Reiseziel um Preise zu sehen</p>
+              ) : Object.keys(monthPrices).length === 0 ? (
+                <p className="text-xs text-muted-foreground mt-4 text-center">Preise werden geladen...</p>
+              ) : null}
             </div>
           )}
         </div>
@@ -498,6 +585,8 @@ export function SearchHero() {
                   onChange={setDepDate}
                   onFlexChange={setDepFlex}
                   placeholder="Datum hinzufügen"
+                  originCode={originCode}
+                  destCode={destCode}
                 />
               </div>
 
@@ -512,6 +601,8 @@ export function SearchHero() {
                     onChange={setRetDate}
                     onFlexChange={setRetFlex}
                     placeholder="Datum hinzufügen"
+                    originCode={destCode}
+                    destCode={originCode}
                   />
                 </div>
               )}

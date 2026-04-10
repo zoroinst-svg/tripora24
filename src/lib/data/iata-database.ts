@@ -317,7 +317,62 @@ export const IATA_DB: Record<string, AirportInfo> = {
   RIO: { city: "Rio de Janeiro", country: "BR", category: "beach" },
   SAO: { city: "São Paulo", country: "BR", category: "city" },
   SVO: { city: "Moskau (Sheremetyevo)", country: "RU", category: "city" },
-  STN: { city: "London (Stansted)", country: "GB", category: "city" },
+
+  // ==================== ASIEN (mehr) ====================
+  HND: { city: "Tokio (Haneda)", country: "JP", category: "city" },
+  KIX: { city: "Osaka", country: "JP", category: "city" },
+  PEK: { city: "Peking", country: "CN", category: "city" },
+  PVG: { city: "Shanghai", country: "CN", category: "city" },
+  HKG: { city: "Hongkong", country: "HK", category: "city" },
+  TPE: { city: "Taipeh", country: "TW", category: "city" },
+  KUL: { city: "Kuala Lumpur", country: "MY", category: "city" },
+  MNL: { city: "Manila", country: "PH", category: "city" },
+  HAN: { city: "Hanoi", country: "VN", category: "cultural" },
+  SGN: { city: "Ho-Chi-Minh-Stadt", country: "VN", category: "city" },
+  REP: { city: "Siem Reap", country: "KH", category: "cultural" },
+  DEL: { city: "Delhi", country: "IN", category: "cultural" },
+  BOM: { city: "Mumbai", country: "IN", category: "city" },
+  GOI: { city: "Goa", country: "IN", category: "beach" },
+  KTM: { city: "Kathmandu", country: "NP", category: "mountain" },
+
+  // ==================== AFRIKA ====================
+  JNB: { city: "Johannesburg", country: "ZA", category: "city" },
+  CPT: { city: "Kapstadt", country: "ZA", category: "beach" },
+  NBO: { city: "Nairobi", country: "KE", category: "city" },
+  MBA: { city: "Mombasa", country: "KE", category: "beach" },
+  ZNZ: { city: "Sansibar", country: "TZ", category: "island" },
+  JRO: { city: "Kilimanjaro", country: "TZ", category: "mountain" },
+  LOS: { city: "Lagos", country: "NG", category: "city" },
+  ADD: { city: "Addis Abeba", country: "ET", category: "cultural" },
+  DKR: { city: "Dakar", country: "SN", category: "beach" },
+
+  // ==================== AMERIKA (mehr) ====================
+  ORD: { city: "Chicago", country: "US", category: "city" },
+  SFO: { city: "San Francisco", country: "US", category: "city" },
+  LAS: { city: "Las Vegas", country: "US", category: "city" },
+  SEA: { city: "Seattle", country: "US", category: "city" },
+  BOS: { city: "Boston", country: "US", category: "city" },
+  IAD: { city: "Washington D.C.", country: "US", category: "city" },
+  YYZ: { city: "Toronto", country: "CA", category: "city" },
+  YVR: { city: "Vancouver", country: "CA", category: "mountain" },
+  GRU: { city: "São Paulo", country: "BR", category: "city" },
+  GIG: { city: "Rio de Janeiro", country: "BR", category: "beach" },
+  EZE: { city: "Buenos Aires", country: "AR", category: "city" },
+  SCL: { city: "Santiago de Chile", country: "CL", category: "city" },
+  LIM: { city: "Lima", country: "PE", category: "cultural" },
+  BOG: { city: "Bogotá", country: "CO", category: "city" },
+  HAV: { city: "Havanna", country: "CU", category: "cultural" },
+
+  // ==================== OZEANIEN ====================
+  SYD: { city: "Sydney", country: "AU", category: "city" },
+  MEL: { city: "Melbourne", country: "AU", category: "city" },
+  AKL: { city: "Auckland", country: "NZ", category: "city" },
+
+  // ==================== OSTEUROPA ====================
+  KBP: { city: "Kiew", country: "UA", category: "city" },
+  LWO: { city: "Lwiw", country: "UA", category: "cultural" },
+  MSQ: { city: "Minsk", country: "BY", category: "city" },
+  KIV: { city: "Chișinău", country: "MD", category: "city" },
 }
 
 // ==================== COUNTRY NAMES (German) ====================
@@ -340,6 +395,20 @@ export const COUNTRY_NAMES: Record<string, string> = {
   LK: "Sri Lanka", ID: "Indonesien", JM: "Jamaika",
   DO: "Dominikanische Republik", SG: "Singapur",
   JP: "Japan", KR: "Südkorea",
+  // Asien
+  CN: "China", HK: "Hongkong", TW: "Taiwan",
+  MY: "Malaysia", PH: "Philippinen", VN: "Vietnam",
+  KH: "Kambodscha", IN: "Indien", NP: "Nepal",
+  // Afrika
+  ZA: "Südafrika", KE: "Kenia", TZ: "Tansania",
+  NG: "Nigeria", ET: "Äthiopien", SN: "Senegal",
+  // Amerika
+  BR: "Brasilien", AR: "Argentinien", CL: "Chile",
+  PE: "Peru", CO: "Kolumbien", CU: "Kuba", CA: "Kanada",
+  // Ozeanien
+  AU: "Australien", NZ: "Neuseeland",
+  // Osteuropa
+  UA: "Ukraine", BY: "Belarus", MD: "Moldau", RU: "Russland",
 }
 
 export const COUNTRY_FLAGS: Record<string, string> = {
@@ -352,6 +421,12 @@ export const COUNTRY_FLAGS: Record<string, string> = {
   TN: "🇹🇳", IL: "🇮🇱", GE: "🇬🇪", IS: "🇮🇸", LU: "🇱🇺", BE: "🇧🇪",
   US: "🇺🇸", MX: "🇲🇽", MV: "🇲🇻", LK: "🇱🇰", ID: "🇮🇩", JM: "🇯🇲",
   DO: "🇩🇴", SG: "🇸🇬", JP: "🇯🇵", KR: "🇰🇷",
+  CN: "🇨🇳", HK: "🇭🇰", TW: "🇹🇼", MY: "🇲🇾", PH: "🇵🇭",
+  VN: "🇻🇳", KH: "🇰🇭", IN: "🇮🇳", NP: "🇳🇵",
+  ZA: "🇿🇦", KE: "🇰🇪", TZ: "🇹🇿", NG: "🇳🇬", ET: "🇪🇹", SN: "🇸🇳",
+  BR: "🇧🇷", AR: "🇦🇷", CL: "🇨🇱", PE: "🇵🇪", CO: "🇨🇴", CU: "🇨🇺", CA: "🇨🇦",
+  AU: "🇦🇺", NZ: "🇳🇿",
+  UA: "🇺🇦", BY: "🇧🇾", MD: "🇲🇩", RU: "🇷🇺",
 }
 
 // ==================== HELPER FUNCTIONS ====================

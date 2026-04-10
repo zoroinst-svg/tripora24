@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { useSearchParams } from "next/navigation"
 import { Suspense } from "react"
 import { Card, CardContent } from "@/components/ui/card"
@@ -43,23 +43,33 @@ function SearchBar({ from, to, dep }: { from: string; to: string; dep: string })
 function ExploreCountries({ flights, month, onSelectCountry }: {
   flights: FlightOffer[]; month: string; onSelectCountry: (code: string, name: string) => void
 }) {
-  // Group by COUNTRY using the central IATA database
-  const countryPrices = new Map<string, { price: number; stops: number }>()
+  // Group by COUNTRY — track cheapest price + number of cities + total options
+  const countryStats = new Map<string, { price: number; stops: number; cities: Set<string>; count: number }>()
   for (const f of flights) {
     const cc = getCountryCode(f.destination)
-    if (cc === "XX" || cc === "DE") continue // Skip unknown and domestic
-    const existing = countryPrices.get(cc)
-    if (!existing || f.price < existing.price) {
-      countryPrices.set(cc, { price: f.price, stops: f.stops })
+    if (cc === "XX" || cc === "DE") continue
+    const existing = countryStats.get(cc)
+    if (!existing) {
+      countryStats.set(cc, { price: f.price, stops: f.stops, cities: new Set([f.destination]), count: 1 })
+    } else {
+      existing.cities.add(f.destination)
+      existing.count++
+      if (f.price < existing.price) {
+        existing.price = f.price
+        existing.stops = f.stops
+      }
     }
   }
 
-  const countries = Array.from(countryPrices.entries())
+  const countries = Array.from(countryStats.entries())
     .map(([code, data]) => ({
       code,
       name: getCountryNameFromDB(code),
       flag: COUNTRY_FLAGS[code] || "",
-      ...data,
+      price: data.price,
+      stops: data.stops,
+      cityCount: data.cities.size,
+      optionCount: data.count,
     }))
     .sort((a, b) => a.price - b.price)
 
@@ -71,9 +81,9 @@ function ExploreCountries({ flights, month, onSelectCountry }: {
       <h2 className="text-2xl md:text-3xl font-bold mb-2">
         Alle Orte {month ? `im ${getMonthName(month)}` : ""} erkunden
       </h2>
-      <p className="text-muted-foreground mb-6">Wähle ein Land um Städte und Preise zu sehen</p>
+      <p className="text-muted-foreground mb-6">{countries.length} Länder gefunden · Wähle ein Land um Städte zu sehen</p>
 
-      <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+      <div className="flex gap-2 mb-6 overflow-x-auto pb-2 no-scrollbar">
         {["Günstigste Flüge", "Direktflüge"].map(t => (
           <button key={t} onClick={() => setFilter(t)}
             className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap cursor-pointer transition-colors ${filter === t ? "bg-foreground text-background" : "bg-muted hover:bg-muted/80"}`}
@@ -82,25 +92,33 @@ function ExploreCountries({ flights, month, onSelectCountry }: {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filtered.map(country => (
+        {filtered.map((country, i) => (
           <Card key={country.code}
-            className="overflow-hidden hover:shadow-lg transition-all cursor-pointer group"
+            className={`overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer group animate-fade-in-up stagger-${Math.min(i + 1, 10)}`}
             onClick={() => onSelectCountry(country.code, country.name)}
           >
             <div className="h-44 overflow-hidden relative">
               <img src={getCountryImage(country.code)} alt={country.name}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+              <div className="absolute bottom-3 left-3 right-3 text-white">
+                <h3 className="font-bold text-xl drop-shadow-lg">{country.flag} {country.name}</h3>
+              </div>
             </div>
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-bold text-lg">{country.flag} {country.name}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Flüge ab · {country.stops === 0 ? "Direkt" : "mit Umstieg"}
+                  <p className="text-xs text-muted-foreground">
+                    {country.cityCount} {country.cityCount === 1 ? "Stadt" : "Städte"} · {country.optionCount} Optionen
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    {country.stops === 0 ? "Direktflüge verfügbar" : "Mit Umstieg"}
                   </p>
                 </div>
-                <div className="text-2xl font-bold">ab ~{formatPrice(country.price)}</div>
+                <div className="text-right">
+                  <div className="text-xs text-muted-foreground">ab</div>
+                  <div className="text-2xl font-bold text-primary">~{formatPrice(country.price)}</div>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -125,19 +143,25 @@ function ExploreCities({ flights, countryCode, countryName, month, onSelectCity,
   flights: FlightOffer[]; countryCode: string; countryName: string; month: string
   onSelectCity: (code: string, name: string) => void; onBack: () => void
 }) {
-  // Group flights by destination city — only flights TO this country
-  const cityPrices = new Map<string, { price: number; stops: number; name: string }>()
+  // Track multiple options per city
+  const cityStats = new Map<string, { price: number; stops: number; name: string; count: number }>()
   for (const f of flights) {
     const cc = getCountryCode(f.destination)
     if (cc !== countryCode) continue
     const cityName = f.destinationCity || getCity(f.destination)
-    const existing = cityPrices.get(f.destination)
-    if (!existing || f.price < existing.price) {
-      cityPrices.set(f.destination, { price: f.price, stops: f.stops, name: cityName })
+    const existing = cityStats.get(f.destination)
+    if (!existing) {
+      cityStats.set(f.destination, { price: f.price, stops: f.stops, name: cityName, count: 1 })
+    } else {
+      existing.count++
+      if (f.price < existing.price) {
+        existing.price = f.price
+        existing.stops = f.stops
+      }
     }
   }
 
-  const cities = Array.from(cityPrices.entries())
+  const cities = Array.from(cityStats.entries())
     .map(([code, data]) => ({ code, ...data }))
     .sort((a, b) => a.price - b.price)
 
@@ -153,9 +177,9 @@ function ExploreCities({ flights, countryCode, countryName, month, onSelectCity,
       <h2 className="text-2xl md:text-3xl font-bold mb-2">
         Entdecke {countryName} {month ? `im ${getMonthName(month)}` : ""}
       </h2>
-      <p className="text-muted-foreground mb-6">Wähle eine Stadt für konkrete Flugangebote</p>
+      <p className="text-muted-foreground mb-6">{cities.length} {cities.length === 1 ? "Stadt" : "Städte"} gefunden · Wähle eine für konkrete Angebote</p>
 
-      <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+      <div className="flex gap-2 mb-6 overflow-x-auto pb-2 no-scrollbar">
         {["Günstigste Flüge", "Direktflüge"].map(t => (
           <button key={t} onClick={() => setFilter(t)}
             className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap cursor-pointer transition-colors ${filter === t ? "bg-foreground text-background" : "bg-muted hover:bg-muted/80"}`}
@@ -164,20 +188,29 @@ function ExploreCities({ flights, countryCode, countryName, month, onSelectCity,
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filtered.map(city => (
+        {filtered.map((city, i) => (
           <Card key={city.code}
-            className="overflow-hidden hover:shadow-lg transition-all cursor-pointer group"
+            className={`overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer group animate-fade-in-up stagger-${Math.min(i + 1, 10)}`}
             onClick={() => onSelectCity(city.code, city.name)}
           >
-            <div className="h-44 overflow-hidden">
+            <div className="h-44 overflow-hidden relative">
               <img src={getCityImage(city.code)} alt={city.name}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+              <div className="absolute bottom-3 left-3 right-3 text-white">
+                <h3 className="font-bold text-xl drop-shadow-lg">{city.name}</h3>
+              </div>
             </div>
             <CardContent className="p-4">
-              <h3 className="font-bold text-lg">{city.name}</h3>
-              <div className="flex items-center justify-between mt-2">
-                <span className="text-sm text-muted-foreground">Flüge · {city.stops === 0 ? "Direkt" : "mit Umstieg"}</span>
-                <span className="text-xl font-bold text-primary">ab ~{formatPrice(city.price)}</span>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-muted-foreground">{city.count} {city.count === 1 ? "Verbindung" : "Verbindungen"}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{city.stops === 0 ? "Direkt verfügbar" : "Mit Umstieg"}</p>
+                </div>
+                <div className="text-right">
+                  <div className="text-xs text-muted-foreground">ab</div>
+                  <div className="text-2xl font-bold text-primary">~{formatPrice(city.price)}</div>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -332,18 +365,24 @@ function SelectDepartureAirport({ flights, destCode, destName, month, originIsCo
   flights: FlightOffer[]; destCode: string; destName: string; month: string; originIsCountry: boolean
   onSelectAirport: (code: string, name: string) => void; onBack: () => void
 }) {
-  // Group by departure airport, find cheapest per airport
-  const airportPrices = new Map<string, { price: number; stops: number; name: string }>()
+  // Track multiple options per departure airport
+  const airportStats = new Map<string, { price: number; stops: number; name: string; count: number }>()
   const destFlights = flights.filter(f => f.destination === destCode || f.destinationCity === destName)
 
   for (const f of destFlights) {
-    const existing = airportPrices.get(f.origin)
-    if (!existing || f.price < existing.price) {
-      airportPrices.set(f.origin, { price: f.price, stops: f.stops, name: f.originCity })
+    const existing = airportStats.get(f.origin)
+    if (!existing) {
+      airportStats.set(f.origin, { price: f.price, stops: f.stops, name: f.originCity, count: 1 })
+    } else {
+      existing.count++
+      if (f.price < existing.price) {
+        existing.price = f.price
+        existing.stops = f.stops
+      }
     }
   }
 
-  const airports = Array.from(airportPrices.entries())
+  const airports = Array.from(airportStats.entries())
     .map(([code, data]) => ({ code, ...data }))
     .sort((a, b) => a.price - b.price)
 
@@ -356,10 +395,10 @@ function SelectDepartureAirport({ flights, destCode, destName, month, originIsCo
         <ChevronLeft className="h-4 w-4" /> Zurück
       </button>
 
-      <h2 className="text-2xl md:text-3xl font-bold mb-2">Abflugort auswählen</h2>
-      <p className="text-muted-foreground mb-6">Wähle deinen Abflughafen für Flüge nach {destName}</p>
+      <h2 className="text-2xl md:text-3xl font-bold mb-2">Abflughafen auswählen</h2>
+      <p className="text-muted-foreground mb-6">{airports.length} Flughäfen mit Verbindungen nach {destName}</p>
 
-      <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+      <div className="flex gap-2 mb-6 overflow-x-auto pb-2 no-scrollbar">
         {["Günstigste Flüge", "Direktflüge", "Alle verfügbaren Orte"].map(t => (
           <button key={t} onClick={() => setFilter(t)}
             className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap cursor-pointer transition-colors ${filter === t ? "bg-foreground text-background" : "bg-muted hover:bg-muted/80"}`}
@@ -368,19 +407,25 @@ function SelectDepartureAirport({ flights, destCode, destName, month, originIsCo
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-        {filtered.map(airport => (
+        {filtered.map((airport, i) => (
           <Card key={airport.code}
-            className="hover:shadow-md transition-shadow cursor-pointer"
+            className={`hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 cursor-pointer animate-fade-in-up stagger-${Math.min(i + 1, 10)}`}
             onClick={() => onSelectAirport(airport.code, airport.name)}
           >
             <CardContent className="p-4 flex items-center justify-between">
-              <div>
-                <h3 className="font-semibold">{airport.name}</h3>
-                <p className="text-sm text-muted-foreground">
-                  Flüge ab · {airport.stops === 0 ? "Direkt" : "mit Umstieg"}
+              <div className="min-w-0 flex-1">
+                <h3 className="font-semibold truncate">{airport.name}</h3>
+                <p className="text-xs text-muted-foreground">
+                  {airport.code} · {airport.count} {airport.count === 1 ? "Flug" : "Flüge"}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {airport.stops === 0 ? "Direkt verfügbar" : "Mit Umstieg"}
                 </p>
               </div>
-              <div className="text-xl font-bold">ab ~{formatPrice(airport.price)}</div>
+              <div className="text-right shrink-0">
+                <div className="text-xs text-muted-foreground">ab</div>
+                <div className="text-xl font-bold text-primary">~{formatPrice(airport.price)}</div>
+              </div>
             </CardContent>
           </Card>
         ))}
@@ -426,8 +471,17 @@ function FlightSearchContent() {
   const destLabel = selectedCity ? selectedCity.name :
     selectedCountry ? selectedCountry.name : "Alle Orte"
 
+  // AbortController + ref to prevent race condition
+  const abortRef = useRef<AbortController | null>(null)
+
   const doSearch = useCallback(async () => {
     if (!from) return
+
+    // Cancel previous request
+    abortRef.current?.abort()
+    const controller = new AbortController()
+    abortRef.current = controller
+
     setLoading(true); setError(null)
     try {
       const params = new URLSearchParams()
@@ -437,15 +491,26 @@ function FlightSearchContent() {
       if (dep) params.set("dep", dep)
       if (ret) params.set("ret", ret)
 
-      const res = await fetch(`/api/flights/search?${params}`)
+      const res = await fetch(`/api/flights/search?${params}`, { signal: controller.signal })
       if (!res.ok) throw new Error("API error")
       const data = await res.json()
-      setFlights(data.results || [])
-    } catch { setError("Suche fehlgeschlagen. Bitte versuche es erneut.") }
-    finally { setLoading(false) }
+      // Only update if this request wasn't aborted
+      if (!controller.signal.aborted) {
+        setFlights(data.results || [])
+      }
+    } catch (err: any) {
+      if (err?.name !== "AbortError") {
+        setError("Suche fehlgeschlagen. Bitte versuche es erneut.")
+      }
+    } finally {
+      if (!controller.signal.aborted) setLoading(false)
+    }
   }, [from, selectedCountry, selectedCity, dep, ret])
 
-  useEffect(() => { if (from) doSearch() }, [from, selectedCountry?.code, selectedCity?.code, dep]) // eslint-disable-line
+  useEffect(() => {
+    if (from) doSearch()
+    return () => abortRef.current?.abort()
+  }, [from, selectedCountry?.code, selectedCity?.code, dep]) // eslint-disable-line
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-5xl">
