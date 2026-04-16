@@ -4,28 +4,25 @@ import Link from "next/link"
 import { HotelIcon, CarIcon, PackageIcon, GlobeIcon } from "@/components/ui/icons"
 
 const ACTIONS = [
-  { href: "/hotels", label: "Hotels", description: "Über 2 Mio. Unterkünfte", icon: HotelIcon },
-  { href: "/fluege?from=DE", label: "Mietwagen", description: "Bei 900+ Anbietern", icon: CarIcon },
-  { href: "/pauschalreisen", label: "Pauschalreisen", description: "Flug + Hotel kombiniert", icon: PackageIcon },
-  { href: "/fluege?from=DE&to=EVERYWHERE", label: "Alle Orte erkunden", description: "Wohin auch immer", icon: GlobeIcon },
+  { href: "/hotels", label: "Hotels", icon: HotelIcon },
+  { href: "/fluege?from=DE", label: "Mietwagen", icon: CarIcon },
+  { href: "/pauschalreisen", label: "Pauschalreisen", icon: PackageIcon },
+  { href: "/fluege?from=DE&to=EVERYWHERE", label: "Alle Orte erkunden", icon: GlobeIcon },
 ]
 
 export function QuickActions() {
   return (
-    <section className="bg-muted/40 py-8 -mt-6 relative z-10">
+    <section className="py-6 relative z-10">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-          {ACTIONS.map((action, i) => (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {ACTIONS.map((action) => (
             <Link
               key={action.href}
               href={action.href}
-              className={`animate-fade-in-up stagger-${i + 1} group rounded-2xl bg-card border border-border shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 p-5`}
+              className="group flex items-center gap-3 rounded-xl bg-[#0a2540] hover:bg-[#0f3460] text-white px-5 py-4 transition-all duration-200 hover:shadow-lg"
             >
-              <div className="inline-flex items-center justify-center h-11 w-11 rounded-xl bg-muted text-foreground mb-3 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
-                <action.icon className="h-5 w-5" />
-              </div>
-              <h3 className="font-bold text-base">{action.label}</h3>
-              <p className="text-xs text-muted-foreground mt-1">{action.description}</p>
+              <action.icon className="h-5 w-5 text-white/80" />
+              <span className="font-semibold text-sm">{action.label}</span>
             </Link>
           ))}
         </div>
