@@ -7,9 +7,10 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { Hotel, Search, MapPin, Star, ExternalLink, Loader2, Calendar, ChevronLeft } from "lucide-react"
+import { HotelIcon, SearchIcon, MapPinIcon, StarIcon, ExternalLinkIcon, SpinnerIcon, CalendarIcon, ChevronLeftIcon } from "@/components/ui/icons"
 import { getCityImage, getCountryImage } from "@/lib/utils/images"
 import { COUNTRY_NAMES, getCity } from "@/lib/data/iata-database"
+import { useI18n } from "@/lib/i18n/context"
 
 const POPULAR_COUNTRIES = ["ES", "TR", "GR", "IT", "PT", "HR", "EG", "FR", "GB", "AE", "TH", "DE"]
 
@@ -76,6 +77,7 @@ function buildBookingLinks(destination: string, checkIn?: string, checkOut?: str
 }
 
 function HotelSearchContent() {
+  const { t } = useI18n()
   const searchParams = useSearchParams()
   const initialDest = searchParams.get("to") || ""
 
@@ -96,7 +98,7 @@ function HotelSearchContent() {
           onClick={() => { setSelectedCity(null); setSearchQuery("") }}
           className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4 cursor-pointer"
         >
-          <ChevronLeft className="h-4 w-4" /> Zurück
+          <ChevronLeftIcon className="h-4 w-4" /> Zurück
         </button>
 
         <div className="mb-6">
@@ -111,14 +113,14 @@ function HotelSearchContent() {
               <div>
                 <label className="text-xs text-muted-foreground mb-1 block">Check-in</label>
                 <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input type="date" value={checkIn} onChange={(e) => setCheckIn(e.target.value)} className="pl-10" />
                 </div>
               </div>
               <div>
                 <label className="text-xs text-muted-foreground mb-1 block">Check-out</label>
                 <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input type="date" value={checkOut} onChange={(e) => setCheckOut(e.target.value)} className="pl-10" />
                 </div>
               </div>
@@ -139,7 +141,7 @@ function HotelSearchContent() {
                   <div className="min-w-0 flex-1">
                     <h3 className="font-bold text-base">{p.name}</h3>
                     <div className="flex items-center gap-1 mt-0.5">
-                      <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                      <StarIcon className="h-3 w-3 fill-amber-400 text-amber-400" />
                       <span className="text-sm">{p.rating}/5</span>
                       <span className="text-xs text-muted-foreground">({p.reviews.toLocaleString("de-DE")})</span>
                     </div>
@@ -151,7 +153,7 @@ function HotelSearchContent() {
                   </div>
                   <a href={p.link} target="_blank" rel="noopener noreferrer">
                     <Button size="sm" className="gap-1">
-                      Zur Website <ExternalLink className="h-3 w-3" />
+                      Zur Website <ExternalLinkIcon className="h-3 w-3" />
                     </Button>
                   </a>
                 </div>
@@ -169,7 +171,7 @@ function HotelSearchContent() {
     return (
       <div className="container mx-auto px-4 py-8 max-w-5xl">
         <button onClick={() => setSelectedCountry(null)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4 cursor-pointer">
-          <ChevronLeft className="h-4 w-4" /> Zurück
+          <ChevronLeftIcon className="h-4 w-4" /> Zurück
         </button>
 
         <h1 className="text-3xl font-bold mb-2">
@@ -197,7 +199,7 @@ function HotelSearchContent() {
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">5+ Anbieter vergleichen</span>
                     <Button size="sm" variant="ghost" className="gap-1">
-                      Hotels <ExternalLink className="h-3 w-3" />
+                      Hotels <ExternalLinkIcon className="h-3 w-3" />
                     </Button>
                   </div>
                 </CardContent>
@@ -218,7 +220,7 @@ function HotelSearchContent() {
     <div className="container mx-auto px-4 py-8 max-w-5xl">
       <div className="flex items-center gap-3 mb-6">
         <div className="p-2 rounded-lg bg-primary/10">
-          <Hotel className="h-6 w-6 text-primary" />
+          <HotelIcon className="h-6 w-6 text-primary" />
         </div>
         <div>
           <h1 className="text-2xl font-bold">Hotels vergleichen</h1>
@@ -229,7 +231,7 @@ function HotelSearchContent() {
       <Card className="mb-8">
         <CardContent className="p-4">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -264,7 +266,7 @@ function HotelSearchContent() {
 
 export default function HotelsPage() {
   return (
-    <Suspense fallback={<div className="container mx-auto p-8 text-center"><Loader2 className="h-8 w-8 animate-spin mx-auto" /></div>}>
+    <Suspense fallback={<div className="container mx-auto p-8 text-center"><SpinnerIcon className="h-8 w-8 animate-spin mx-auto" /></div>}>
       <HotelSearchContent />
     </Suspense>
   )

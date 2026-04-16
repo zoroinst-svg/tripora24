@@ -8,9 +8,10 @@ import { Button } from "@/components/ui/button"
 import { getCountryCode, getCity, getCountryName as getCountryNameFromDB, isKnownCountry, COUNTRY_NAMES } from "@/lib/data/iata-database"
 import { getCountryImage, getCityImage } from "@/lib/utils/images"
 import type { FlightOffer } from "@/lib/deal-engine/mock-data"
-import { Plane, Search, Loader2, AlertCircle, ArrowRight, ChevronLeft } from "lucide-react"
+import { PlaneIcon, SearchIcon, SpinnerIcon, AlertIcon, ArrowRightIcon, ChevronLeftIcon } from "@/components/ui/icons"
 import Link from "next/link"
 import { formatPrice } from "@/lib/utils"
+import { useI18n } from "@/lib/i18n/context"
 
 function isCountryCode(c: string): boolean {
   return c.length === 2 && /^[A-Z]{2}$/.test(c) && isKnownCountry(c)
@@ -29,7 +30,7 @@ function SearchBar({ from, to, dep }: { from: string; to: string; dep: string })
   const depLabel = dep ? (dep.length === 7 ? getMonthName(dep) : new Date(dep).toLocaleDateString("de-DE", { month: "short", year: "numeric" })) : ""
   return (
     <div className="bg-[#0a2540] text-white rounded-xl mb-8 px-4 py-3 flex items-center gap-3">
-      <Search className="h-4 w-4 shrink-0 opacity-70" />
+      <SearchIcon className="h-4 w-4 shrink-0 opacity-70" />
       <div className="text-sm font-medium truncate flex-1">
         {from} – {to || "Alle Orte"}{depLabel && ` · ${depLabel}`} · Economy
       </div>
@@ -43,6 +44,7 @@ function SearchBar({ from, to, dep }: { from: string; to: string; dep: string })
 function ExploreCountries({ flights, month, onSelectCountry }: {
   flights: FlightOffer[]; month: string; onSelectCountry: (code: string, name: string) => void
 }) {
+  const { t } = useI18n()
   // Group by COUNTRY — track cheapest price + number of cities + total options
   const countryStats = new Map<string, { price: number; stops: number; cities: Set<string>; count: number }>()
   for (const f of flights) {
@@ -164,7 +166,7 @@ function ExploreCountries({ flights, month, onSelectCountry }: {
 
       {filtered.length === 0 && remainingCountries.length === 0 && (
         <Card className="p-12 text-center">
-          <Plane className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+          <PlaneIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
           <h3 className="text-lg font-semibold">Keine Direktflüge gefunden</h3>
           <p className="text-muted-foreground mt-2">Wähle &quot;Günstigste Flüge&quot; für mehr Ergebnisse.</p>
         </Card>
@@ -208,7 +210,7 @@ function ExploreCities({ flights, countryCode, countryName, month, onSelectCity,
   return (
     <div>
       <button onClick={onBack} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4 cursor-pointer">
-        <ChevronLeft className="h-4 w-4" /> Zurück zu allen Ländern
+        <ChevronLeftIcon className="h-4 w-4" /> Zurück zu allen Ländern
       </button>
 
       <h2 className="text-2xl md:text-3xl font-bold mb-2">
@@ -257,7 +259,7 @@ function ExploreCities({ flights, countryCode, countryName, month, onSelectCity,
       {filtered.length === 0 && (
         <div className="space-y-4">
           <Card className="p-8 text-center">
-            <Plane className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
+            <PlaneIcon className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
             <h3 className="text-lg font-semibold mb-2">Für {countryName} haben wir aktuell keine gecachten Preise</h3>
             <p className="text-muted-foreground text-sm mb-6">Suche direkt bei unseren Partnern nach verfügbaren Flügen:</p>
             <div className="flex flex-wrap gap-3 justify-center">
@@ -271,7 +273,7 @@ function ExploreCities({ flights, countryCode, countryName, month, onSelectCity,
                   className="inline-flex items-center gap-2 px-5 py-2.5 bg-card border rounded-xl text-sm font-semibold hover:shadow-md hover:-translate-y-0.5 transition-all cursor-pointer"
                 >
                   {p.name}
-                  <ArrowRight className="h-3 w-3" />
+                  <ArrowRightIcon className="h-3 w-3" />
                 </a>
               ))}
             </div>
@@ -309,7 +311,7 @@ function FlightOffers({ flights, destCode, destName, month, onBack }: {
   return (
     <div>
       <button onClick={onBack} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4 cursor-pointer">
-        <ChevronLeft className="h-4 w-4" /> Zurück
+        <ChevronLeftIcon className="h-4 w-4" /> Zurück
       </button>
 
       <h2 className="text-2xl md:text-3xl font-bold mb-1">Flugangebote nach {destName}</h2>
@@ -350,7 +352,7 @@ function FlightOffers({ flights, destCode, destName, month, onBack }: {
               <CardContent className="p-4">
                 {/* Hinflug */}
                 <div className="flex items-center gap-3 mb-2">
-                  <Plane className="h-4 w-4 text-primary shrink-0" />
+                  <PlaneIcon className="h-4 w-4 text-primary shrink-0" />
                   <div className="flex-1">
                     <span className="font-semibold">
                       {flight.departureDate ? new Date(flight.departureDate).toLocaleDateString("de-DE", { weekday: "short", day: "numeric", month: "short" }) : ""}
@@ -367,7 +369,7 @@ function FlightOffers({ flights, destCode, destName, month, onBack }: {
                 {flight.returnDate && (
                   <>
                     <div className="flex items-center gap-3 mb-1">
-                      <Plane className="h-4 w-4 text-primary shrink-0 rotate-180" />
+                      <PlaneIcon className="h-4 w-4 text-primary shrink-0 rotate-180" />
                       <div className="flex-1">
                         <span className="font-semibold">
                           {new Date(flight.returnDate).toLocaleDateString("de-DE", { weekday: "short", day: "numeric", month: "short" })}
@@ -392,7 +394,7 @@ function FlightOffers({ flights, destCode, destName, month, onBack }: {
                     href={`/fluege/detail?origin=${flight.origin}&dest=${flight.destination}&dep=${flight.departureDate}&ret=${flight.returnDate || ""}&price=${flight.price}&airline=${encodeURIComponent(flight.airline)}&stops=${flight.stops}&depTime=${encodeURIComponent(flight.departureTime || "")}&duration=${flight.duration}`}
                     className="text-sm font-semibold text-primary hover:underline inline-flex items-center gap-1 cursor-pointer"
                   >
-                    Diese Reisedaten anzeigen <ArrowRight className="h-4 w-4" />
+                    Diese Reisedaten anzeigen <ArrowRightIcon className="h-4 w-4" />
                   </Link>
                 </div>
               </CardContent>
@@ -403,7 +405,7 @@ function FlightOffers({ flights, destCode, destName, month, onBack }: {
 
       {filtered.length === 0 && (
         <Card className="p-12 text-center">
-          <Plane className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+          <PlaneIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
           <h3 className="text-lg font-semibold">Keine Flüge gefunden</h3>
           <p className="text-muted-foreground mt-2">Versuche einen anderen Filter oder Monat.</p>
         </Card>
@@ -446,7 +448,7 @@ function SelectDepartureAirport({ flights, destCode, destName, month, originIsCo
   return (
     <div>
       <button onClick={onBack} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4 cursor-pointer">
-        <ChevronLeft className="h-4 w-4" /> Zurück
+        <ChevronLeftIcon className="h-4 w-4" /> Zurück
       </button>
 
       <h2 className="text-2xl md:text-3xl font-bold mb-2">Abflughafen auswählen</h2>
@@ -487,7 +489,7 @@ function SelectDepartureAirport({ flights, destCode, destName, month, originIsCo
 
       {filtered.length === 0 && (
         <Card className="p-12 text-center">
-          <Plane className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+          <PlaneIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
           <h3 className="text-lg font-semibold">Keine Direktflüge gefunden</h3>
           <p className="text-muted-foreground mt-2">Wähle &quot;Günstigste Flüge&quot; für alle Verbindungen.</p>
         </Card>
@@ -577,7 +579,7 @@ function FlightSearchContent() {
 
       {loading && (
         <div className="text-center py-20">
-          <Loader2 className="h-10 w-10 text-primary mx-auto mb-4 animate-spin" />
+          <SpinnerIcon className="h-10 w-10 text-primary mx-auto mb-4 animate-spin" />
           <h3 className="text-lg font-semibold">Suche läuft...</h3>
           <p className="text-muted-foreground mt-2">Wir durchsuchen hunderte Airlines nach den besten Preisen.</p>
         </div>
@@ -585,7 +587,7 @@ function FlightSearchContent() {
 
       {error && !loading && (
         <Card className="p-8 text-center">
-          <AlertCircle className="h-10 w-10 text-destructive mx-auto mb-4" />
+          <AlertIcon className="h-10 w-10 text-destructive mx-auto mb-4" />
           <p className="text-muted-foreground mb-4">{error}</p>
           <Button onClick={doSearch} variant="outline">Erneut versuchen</Button>
         </Card>
@@ -593,7 +595,7 @@ function FlightSearchContent() {
 
       {!loading && !error && !from && (
         <div className="text-center py-20">
-          <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+          <SearchIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
           <h3 className="text-lg font-semibold">Starte eine Suche</h3>
           <p className="text-muted-foreground mt-2">Wähle auf der Startseite einen Abflugort.</p>
         </div>
@@ -653,7 +655,7 @@ function FlightSearchContent() {
 
 export default function FluegePage() {
   return (
-    <Suspense fallback={<div className="container mx-auto p-8 text-center"><Loader2 className="h-8 w-8 animate-spin mx-auto" /></div>}>
+    <Suspense fallback={<div className="container mx-auto p-8 text-center"><SpinnerIcon className="h-8 w-8 animate-spin mx-auto" /></div>}>
       <FlightSearchContent />
     </Suspense>
   )

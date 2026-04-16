@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
-import { Package, Plane, Hotel, ArrowRight, ExternalLink, Sparkles, Loader2 } from "lucide-react"
+import { PackageIcon, PlaneIcon, HotelIcon, ArrowRightIcon, ExternalLinkIcon, SparklesIcon, SpinnerIcon } from "@/components/ui/icons"
 import { formatPrice } from "@/lib/utils"
 import { getCityImage } from "@/lib/utils/images"
 import { getCountryCode, getCountryName } from "@/lib/data/iata-database"
@@ -70,7 +70,7 @@ export default function PauschalreisenPage() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center gap-3 mb-2">
         <div className="p-2 rounded-lg bg-primary/10">
-          <Package className="h-6 w-6 text-primary" />
+          <PackageIcon className="h-6 w-6 text-primary" />
         </div>
         <div>
           <h1 className="text-2xl font-bold">Pauschalreisen</h1>
@@ -80,7 +80,7 @@ export default function PauschalreisenPage() {
 
       <Card className="mb-6 bg-primary/5 border-primary/20">
         <CardContent className="p-4 flex items-center gap-3">
-          <Sparkles className="h-5 w-5 text-primary shrink-0" />
+          <SparklesIcon className="h-5 w-5 text-primary shrink-0" />
           <p className="text-sm">
             <strong>Wie funktioniert das?</strong> Wir kombinieren den günstigsten Flug mit geschätzten Hotelkosten. Klick auf &quot;Jetzt suchen&quot; um Hotel-Preise auf Booking.com zu vergleichen.
           </p>
@@ -89,7 +89,7 @@ export default function PauschalreisenPage() {
 
       {loading ? (
         <div className="text-center py-20">
-          <Loader2 className="h-10 w-10 text-primary mx-auto mb-4 animate-spin" />
+          <SpinnerIcon className="h-10 w-10 text-primary mx-auto mb-4 animate-spin" />
           <h3 className="text-lg font-semibold">Pauschalreisen werden berechnet...</h3>
         </div>
       ) : (
@@ -106,11 +106,11 @@ export default function PauschalreisenPage() {
 
                   <div className="mt-3 space-y-2">
                     <div className="flex items-center gap-2 text-sm">
-                      <Plane className="h-3.5 w-3.5 text-primary" />
+                      <PlaneIcon className="h-3.5 w-3.5 text-primary" />
                       <span>Flug ab {pkg.flight.originCity}: <strong>{formatPrice(pkg.flight.price)}</strong></span>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
-                      <Hotel className="h-3.5 w-3.5 text-primary" />
+                      <HotelIcon className="h-3.5 w-3.5 text-primary" />
                       <span>{pkg.nights} Nächte ab ca. <strong>{formatPrice(pkg.hotelPerNight)}/N.</strong></span>
                     </div>
                   </div>
@@ -130,7 +130,7 @@ export default function PauschalreisenPage() {
                     </div>
                     <a href={pkg.flight.bookingUrl} target="_blank" rel="noopener noreferrer">
                       <Button size="sm" className="gap-1">
-                        Jetzt suchen <ExternalLink className="h-3 w-3" />
+                        Jetzt suchen <ExternalLinkIcon className="h-3 w-3" />
                       </Button>
                     </a>
                   </div>

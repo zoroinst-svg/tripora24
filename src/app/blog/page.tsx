@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { ARTICLES } from "@/lib/blog/articles"
 import { Card } from "@/components/ui/card"
-import { ArrowRight, BookOpen } from "lucide-react"
+import { ArrowRightIcon, BookOpenIcon } from "@/components/ui/icons"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
@@ -15,7 +15,7 @@ export default function BlogPage() {
       {/* Header */}
       <div className="text-center mb-12">
         <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-semibold mb-4">
-          <BookOpen className="h-4 w-4" />
+          <BookOpenIcon className="h-4 w-4" />
           Tripora24 Blog
         </div>
         <h1 className="text-4xl md:text-5xl font-bold mb-3">Reise-Inspiration & Tipps</h1>
@@ -45,7 +45,7 @@ export default function BlogPage() {
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
                   <span>{article.readTime} Lesezeit</span>
                   <span className="text-primary font-semibold flex items-center gap-1">
-                    Lesen <ArrowRight className="h-3 w-3" />
+                    Lesen <ArrowRightIcon className="h-3 w-3" />
                   </span>
                 </div>
               </div>

@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, createContext, useContext } from "react"
 import { createPortal } from "react-dom"
 import { useRouter } from "next/navigation"
-import { Plane, Hotel, Package, ArrowRightLeft, Search, MapPin, ChevronDown, Users, Minus, Plus, Car, Globe, Building2 } from "lucide-react"
+import { PlaneIcon, HotelIcon, PackageIcon, SwapIcon, SearchIcon, MapPinIcon, ChevronDownIcon, UsersIcon, MinusIcon, PlusIcon, CarIcon, GlobeIcon, BuildingIcon } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { smartSearch, type SearchResult } from "@/lib/utils/airports"
 import { useI18n } from "@/lib/i18n/context"
@@ -109,10 +109,10 @@ function LocationInput({
   }
 
   const getIcon = (type: string) => {
-    if (type === "everywhere") return <Globe className="h-4 w-4 text-blue-500" />
-    if (type === "country") return <Globe className="h-4 w-4 text-emerald-600" />
-    if (type === "city") return <Building2 className="h-4 w-4 text-orange-500" />
-    return <Plane className="h-4 w-4 text-muted-foreground" />
+    if (type === "everywhere") return <GlobeIcon className="h-4 w-4 text-blue-500" />
+    if (type === "country") return <GlobeIcon className="h-4 w-4 text-emerald-600" />
+    if (type === "city") return <BuildingIcon className="h-4 w-4 text-orange-500" />
+    return <PlaneIcon className="h-4 w-4 text-muted-foreground" />
   }
 
   return (
@@ -417,9 +417,9 @@ function PassengerSelector({ id, value, cabinClass, onChange, onClassChange }: {
               <div className="text-xs text-muted-foreground">Ab 16 Jahre</div>
             </div>
             <div className="flex items-center gap-3">
-              <button onMouseDown={(e) => { e.preventDefault(); onChange(Math.max(1, value - 1)) }} className="w-8 h-8 rounded-full border flex items-center justify-center hover:bg-accent cursor-pointer"><Minus className="h-3 w-3" /></button>
+              <button onMouseDown={(e) => { e.preventDefault(); onChange(Math.max(1, value - 1)) }} className="w-8 h-8 rounded-full border flex items-center justify-center hover:bg-accent cursor-pointer"><MinusIcon className="h-3 w-3" /></button>
               <span className="text-base font-bold w-4 text-center">{value}</span>
-              <button onMouseDown={(e) => { e.preventDefault(); onChange(Math.min(9, value + 1)) }} className="w-8 h-8 rounded-full border flex items-center justify-center hover:bg-accent cursor-pointer"><Plus className="h-3 w-3" /></button>
+              <button onMouseDown={(e) => { e.preventDefault(); onChange(Math.min(9, value + 1)) }} className="w-8 h-8 rounded-full border flex items-center justify-center hover:bg-accent cursor-pointer"><PlusIcon className="h-3 w-3" /></button>
             </div>
           </div>
           <div className="border-t pt-3">
@@ -515,10 +515,10 @@ export function SearchHero() {
   const { t } = useI18n()
 
   const tabs = [
-    { id: "flights" as const, label: t("nav.flights"), icon: Plane },
-    { id: "hotels" as const, label: t("nav.hotels"), icon: Hotel },
-    { id: "packages" as const, label: t("nav.packages"), icon: Package },
-    { id: "cars" as const, label: t("nav.carRental"), icon: Car },
+    { id: "flights" as const, label: t("nav.flights"), icon: PlaneIcon },
+    { id: "hotels" as const, label: t("nav.hotels"), icon: HotelIcon },
+    { id: "packages" as const, label: t("nav.packages"), icon: PackageIcon },
+    { id: "cars" as const, label: t("nav.carRental"), icon: CarIcon },
   ]
 
   return (
@@ -556,7 +556,7 @@ export function SearchHero() {
                 className="flex items-center gap-2 text-sm text-white/80 bg-white/10 hover:bg-white/20 rounded-lg px-4 py-2 cursor-pointer transition-colors"
               >
                 {tripType === "return" ? t("hero.roundTrip") : t("hero.oneWay")}
-                <ChevronDown className="h-3 w-3" />
+                <ChevronDownIcon className="h-3 w-3" />
               </button>
             </div>
           )}
@@ -578,7 +578,7 @@ export function SearchHero() {
               {/* Swap */}
               <div className="hidden md:flex items-center -mx-5 z-10">
                 <button onClick={swap} className="w-10 h-10 rounded-full border-2 border-border bg-background flex items-center justify-center hover:bg-accent transition-colors cursor-pointer shadow-sm">
-                  <ArrowRightLeft className="h-4 w-4" />
+                  <SwapIcon className="h-4 w-4" />
                 </button>
               </div>
 
@@ -634,7 +634,7 @@ export function SearchHero() {
               {/* Search */}
               <div className="p-2 flex items-center">
                 <Button onClick={handleSearch} className="h-full rounded-xl px-8 text-base font-semibold gap-2 w-full md:w-auto min-h-[52px]" size="xl">
-                  <Search className="h-5 w-5" />
+                  <SearchIcon className="h-5 w-5" />
                 </Button>
               </div>
             </div>

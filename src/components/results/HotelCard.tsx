@@ -3,7 +3,8 @@
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Star, MapPin, Wifi, Waves, Utensils, ExternalLink, Check } from "lucide-react"
+import { StarIcon, MapPinIcon, ExternalLinkIcon, CheckIcon } from "@/components/ui/icons"
+import { Wifi, Waves, Utensils } from "lucide-react" // These 3 have no Heroicon equivalent
 import { formatPrice } from "@/lib/utils"
 import { calculateDealScore } from "@/lib/deal-engine/score"
 import type { HotelOffer } from "@/lib/deal-engine/mock-data"
@@ -41,11 +42,11 @@ export function HotelCard({ hotel }: { hotel: HotelOffer }) {
                 <div className="flex items-center gap-2 mt-1">
                   <div className="flex items-center">
                     {Array.from({ length: hotel.stars }).map((_, i) => (
-                      <Star key={i} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                      <StarIcon key={i} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
                     ))}
                   </div>
                   <span className="text-xs text-muted-foreground flex items-center gap-1">
-                    <MapPin className="h-3 w-3" /> {hotel.distanceToCenter}
+                    <MapPinIcon className="h-3 w-3" /> {hotel.distanceToCenter}
                   </span>
                 </div>
               </div>
@@ -63,7 +64,7 @@ export function HotelCard({ hotel }: { hotel: HotelOffer }) {
               <Badge variant="secondary">{hotel.mealPlan}</Badge>
               {hotel.freeCancel && (
                 <Badge variant="outline" className="text-green-600 border-green-200 gap-1">
-                  <Check className="h-3 w-3" /> Kostenlose Stornierung
+                  <CheckIcon className="h-3 w-3" /> Kostenlose Stornierung
                 </Badge>
               )}
             </div>
@@ -87,7 +88,7 @@ export function HotelCard({ hotel }: { hotel: HotelOffer }) {
               <div className="text-2xl font-bold text-primary">{formatPrice(hotel.totalPrice)}</div>
               <a href={hotel.bookingUrl} target="_blank" rel="noopener noreferrer">
                 <Button className="mt-2 gap-2" size="sm">
-                  Hotel ansehen <ExternalLink className="h-3 w-3" />
+                  Hotel ansehen <ExternalLinkIcon className="h-3 w-3" />
                 </Button>
               </a>
             </div>

@@ -2,7 +2,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 import { ARTICLES, getArticleBySlug } from "@/lib/blog/articles"
 import { Button } from "@/components/ui/button"
-import { ChevronLeft, ArrowRight, Calendar, Clock } from "lucide-react"
+import { ChevronLeftIcon, ArrowRightIcon, CalendarIcon, ClockIcon } from "@/components/ui/icons"
 import { BlogPostingJsonLd } from "@/components/seo/JsonLd"
 import type { Metadata } from "next"
 
@@ -37,7 +37,7 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
       />
       {/* Back Link */}
       <Link href="/blog" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6">
-        <ChevronLeft className="h-4 w-4" /> Zurück zum Blog
+        <ChevronLeftIcon className="h-4 w-4" /> Zurück zum Blog
       </Link>
 
       {/* Header */}
@@ -48,8 +48,8 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
         <h1 className="text-3xl md:text-5xl font-bold leading-tight mb-4">{article.title}</h1>
         <p className="text-lg text-muted-foreground mb-4">{article.excerpt}</p>
         <div className="flex items-center gap-4 text-sm text-muted-foreground">
-          <span className="flex items-center gap-1.5"><Calendar className="h-4 w-4" /> {new Date(article.publishedAt).toLocaleDateString("de-DE", { day: "numeric", month: "long", year: "numeric" })}</span>
-          <span className="flex items-center gap-1.5"><Clock className="h-4 w-4" /> {article.readTime} Lesezeit</span>
+          <span className="flex items-center gap-1.5"><CalendarIcon className="h-4 w-4" /> {new Date(article.publishedAt).toLocaleDateString("de-DE", { day: "numeric", month: "long", year: "numeric" })}</span>
+          <span className="flex items-center gap-1.5"><ClockIcon className="h-4 w-4" /> {article.readTime} Lesezeit</span>
         </div>
       </div>
 
@@ -79,7 +79,7 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
               <h3 className="text-2xl font-bold mb-4">{block.text}</h3>
               <Link href={block.href || "/fluege"}>
                 <Button size="lg" className="bg-white text-primary hover:bg-blue-50 gap-2">
-                  Jetzt entdecken <ArrowRight className="h-4 w-4" />
+                  Jetzt entdecken <ArrowRightIcon className="h-4 w-4" />
                 </Button>
               </Link>
             </div>

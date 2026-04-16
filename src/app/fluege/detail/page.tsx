@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { Plane, ExternalLink, Star, ChevronLeft, Shield, Luggage, BaggageClaim, Clock, ArrowRight } from "lucide-react"
+import { PlaneIcon, ExternalLinkIcon, StarIcon, ChevronLeftIcon, ShieldIcon, LuggageIcon, BaggageIcon, ClockIcon, ArrowRightIcon } from "@/components/ui/icons"
 import { formatPrice } from "@/lib/utils"
 import { getCity } from "@/lib/data/iata-database"
 import Link from "next/link"
@@ -97,7 +97,7 @@ function FlightDetailContent() {
     <div className="container mx-auto px-4 py-8 max-w-3xl">
       {/* Back */}
       <Link href="/fluege" className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6 cursor-pointer">
-        <ChevronLeft className="h-4 w-4" /> Zurück zur Suche
+        <ChevronLeftIcon className="h-4 w-4" /> Zurück zur Suche
       </Link>
 
       {/* Flight Summary Card */}
@@ -117,7 +117,7 @@ function FlightDetailContent() {
             <p className="text-xs text-muted-foreground mb-2">{originCity} nach {destCity}</p>
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
-                <Plane className="h-5 w-5 text-primary" />
+                <PlaneIcon className="h-5 w-5 text-primary" />
               </div>
               <div className="flex-1">
                 <div className="font-semibold">
@@ -138,7 +138,7 @@ function FlightDetailContent() {
             <p className="text-xs text-muted-foreground mb-2">{destCity} nach {originCity}</p>
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
-                <Plane className="h-5 w-5 text-primary rotate-180" />
+                <PlaneIcon className="h-5 w-5 text-primary rotate-180" />
               </div>
               <div className="flex-1">
                 <div className="font-semibold">Rückflug verfügbar</div>
@@ -164,10 +164,10 @@ function FlightDetailContent() {
       <div className="flex items-center gap-2 mb-4 flex-wrap">
         <span className="text-sm text-muted-foreground">Muss enthalten</span>
         <Badge variant="outline" className="gap-1 cursor-pointer hover:bg-accent">
-          <Luggage className="h-3 w-3" /> Handgepäck
+          <LuggageIcon className="h-3 w-3" /> Handgepäck
         </Badge>
         <Badge variant="outline" className="gap-1 cursor-pointer hover:bg-accent">
-          <BaggageClaim className="h-3 w-3" /> Aufgabegepäck
+          <BaggageIcon className="h-3 w-3" /> Aufgabegepäck
         </Badge>
       </div>
 
@@ -178,7 +178,7 @@ function FlightDetailContent() {
             <CardContent className="p-4">
               {provider.badge && (
                 <Badge className="mb-2 bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200">
-                  <Shield className="h-3 w-3 mr-1" /> {provider.badge}
+                  <ShieldIcon className="h-3 w-3 mr-1" /> {provider.badge}
                 </Badge>
               )}
 
@@ -186,7 +186,7 @@ function FlightDetailContent() {
                 <div>
                   <h3 className="font-bold text-base">{provider.name}</h3>
                   <div className="flex items-center gap-1 mt-0.5">
-                    <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                    <StarIcon className="h-3 w-3 fill-amber-400 text-amber-400" />
                     <span className="text-sm">{provider.rating}/5</span>
                     <span className="text-xs text-muted-foreground">{provider.reviews.toLocaleString("de-DE")}</span>
                   </div>
@@ -206,7 +206,7 @@ function FlightDetailContent() {
                   )}
                   <a href={provider.link} target="_blank" rel="noopener noreferrer">
                     <Button size="sm" className="mt-2 gap-1" variant={i === 0 ? "default" : "outline"}>
-                      Zur Website <ExternalLink className="h-3 w-3" />
+                      Zur Website <ExternalLinkIcon className="h-3 w-3" />
                     </Button>
                   </a>
                 </div>

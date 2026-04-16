@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
-import { Plane, Clock, ArrowRight, ExternalLink } from "lucide-react"
+import { PlaneIcon, ClockIcon, ArrowRightIcon, ExternalLinkIcon } from "@/components/ui/icons"
 import { formatPrice, formatDuration } from "@/lib/utils"
 import { calculateDealScore } from "@/lib/deal-engine/score"
 import type { FlightOffer } from "@/lib/deal-engine/mock-data"
@@ -35,11 +35,11 @@ export function FlightCard({ flight }: { flight: FlightOffer }) {
             </div>
             <div className="flex-1 flex flex-col items-center">
               <div className="text-xs text-muted-foreground flex items-center gap-1">
-                <Clock className="h-3 w-3" /> {formatDuration(flight.duration)}
+                <ClockIcon className="h-3 w-3" /> {formatDuration(flight.duration)}
               </div>
               <div className="w-full flex items-center gap-1">
                 <div className="h-px flex-1 bg-border" />
-                <Plane className="h-3 w-3 text-primary" />
+                <PlaneIcon className="h-3 w-3 text-primary" />
                 <div className="h-px flex-1 bg-border" />
               </div>
               <div className="text-xs text-muted-foreground">
@@ -64,11 +64,11 @@ export function FlightCard({ flight }: { flight: FlightOffer }) {
                 </div>
                 <div className="flex-1 flex flex-col items-center">
                   <div className="text-xs text-muted-foreground flex items-center gap-1">
-                    <Clock className="h-3 w-3" /> {formatDuration(flight.returnDuration || flight.duration)}
+                    <ClockIcon className="h-3 w-3" /> {formatDuration(flight.returnDuration || flight.duration)}
                   </div>
                   <div className="w-full flex items-center gap-1">
                     <div className="h-px flex-1 bg-border" />
-                    <Plane className="h-3 w-3 text-primary rotate-180" />
+                    <PlaneIcon className="h-3 w-3 text-primary rotate-180" />
                     <div className="h-px flex-1 bg-border" />
                   </div>
                   <div className="text-xs text-muted-foreground">
@@ -98,7 +98,7 @@ export function FlightCard({ flight }: { flight: FlightOffer }) {
           </div>
           <a href={flight.bookingUrl} target="_blank" rel="noopener noreferrer">
             <Button className="gap-2 w-full md:w-auto" size="sm">
-              Buchen <ExternalLink className="h-3 w-3" />
+              Buchen <ExternalLinkIcon className="h-3 w-3" />
             </Button>
           </a>
         </div>
