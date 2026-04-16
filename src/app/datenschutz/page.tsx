@@ -72,7 +72,7 @@ export default function DatenschutzPage() {
         Sie haben jederzeit das Recht auf unentgeltliche Auskunft über Ihre gespeicherten personenbezogenen Daten,
         deren Herkunft und Empfänger und den Zweck der Datenverarbeitung sowie ein Recht auf Berichtigung oder
         Löschung dieser Daten. Hierzu sowie zu weiteren Fragen zum Thema Datenschutz können Sie sich jederzeit
-        an uns wenden: kontakt@tripora24.com
+        an uns wenden: contact@tripora24.com
       </p>
     </div>
   )

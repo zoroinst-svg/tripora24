@@ -10,21 +10,22 @@ export default function ImpressumPage() {
       <h1>Impressum</h1>
       <h2>Angaben gemäß § 5 TMG</h2>
       <p>
-        <span className="bg-yellow-200 dark:bg-yellow-900 px-1">DEIN NAME</span><br />
-        <span className="bg-yellow-200 dark:bg-yellow-900 px-1">STRASSE + HAUSNUMMER</span><br />
-        <span className="bg-yellow-200 dark:bg-yellow-900 px-1">PLZ + ORT</span><br />
+        Idris Abdulrahman<br />
+        Erlenfeldanger 8A<br />
+        34123 Kassel<br />
         Deutschland
       </p>
 
       <h2>Kontakt</h2>
       <p>
-        E-Mail: kontakt@tripora24.com
+        E-Mail: contact@tripora24.com
       </p>
 
       <h2>Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</h2>
       <p>
-        [Dein vollständiger Name]<br />
-        [Adresse wie oben]
+        Idris Abdulrahman<br />
+        Erlenfeldanger 8A<br />
+        34123 Kassel
       </p>
 
       <h2>EU-Streitschlichtung</h2>

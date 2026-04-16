@@ -46,7 +46,7 @@ export function Footer() {
               <Link href="/alerts" className="hover:text-foreground transition-colors">{t("nav.priceAlerts")}</Link>
               <Link href="/impressum" className="hover:text-foreground transition-colors">{t("footer.imprint")}</Link>
               <Link href="/datenschutz" className="hover:text-foreground transition-colors">{t("footer.privacy")}</Link>
-              <a href="mailto:kontakt@tripora24.com" className="hover:text-foreground transition-colors">{t("footer.contact")}</a>
+              <a href="mailto:contact@tripora24.com" className="hover:text-foreground transition-colors">{t("footer.contact")}</a>
             </div>
           </div>
         </div>
