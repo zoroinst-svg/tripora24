@@ -27,6 +27,10 @@ export const metadata: Metadata = {
   },
   description: "Tripora24 findet die besten Flüge, Hotels und Pauschalreisen — 24/7. Unsere Deal-Engine analysiert Millionen Preise automatisch und in Echtzeit.",
   keywords: "Flüge günstig, Hotels vergleichen, Pauschalreisen, Reise Deals, Flug Schnäppchen, Hotelvergleich, Tripora24",
+  icons: {
+    icon: "/trivoralogo.png",
+    apple: "/trivoralogo.png",
+  },
   openGraph: {
     title: "Tripora24 — Reise-Deals rund um die Uhr",
     description: "Flüge, Hotels & Pauschalreisen zum Bestpreis. 24/7 Deal-Engine mit Echtzeit-Preisanalyse.",
