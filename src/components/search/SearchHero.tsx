@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 import { Plane, Hotel, Package, ArrowRightLeft, Search, MapPin, ChevronDown, Users, Minus, Plus, Car, Globe, Building2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { smartSearch, type SearchResult } from "@/lib/utils/airports"
+import { useI18n } from "@/lib/i18n/context"
 
 // Portal dropdown — renders in <body> so nothing clips it
 function DropdownPortal({ anchorRef, open, children, width = 340, align = "left" }: {
@@ -511,11 +512,13 @@ export function SearchHero() {
     else router.push(`/pauschalreisen?${params}`)
   }
 
+  const { t } = useI18n()
+
   const tabs = [
-    { id: "flights" as const, label: "Flüge", icon: Plane },
-    { id: "hotels" as const, label: "Hotels", icon: Hotel },
-    { id: "packages" as const, label: "Pauschalreisen", icon: Package },
-    { id: "cars" as const, label: "Mietwagen", icon: Car },
+    { id: "flights" as const, label: t("nav.flights"), icon: Plane },
+    { id: "hotels" as const, label: t("nav.hotels"), icon: Hotel },
+    { id: "packages" as const, label: t("nav.packages"), icon: Package },
+    { id: "cars" as const, label: t("nav.carRental"), icon: Car },
   ]
 
   return (
@@ -542,7 +545,7 @@ export function SearchHero() {
 
           {/* Headline */}
           <h1 className="text-2xl md:text-4xl font-bold mb-6">
-            Millionen von günstigen Flügen. Eine einfache Suche.
+            {t("hero.headline")}
           </h1>
 
           {/* Trip type */}
@@ -552,7 +555,7 @@ export function SearchHero() {
                 onClick={() => setTripType(tripType === "return" ? "oneway" : "return")}
                 className="flex items-center gap-2 text-sm text-white/80 bg-white/10 hover:bg-white/20 rounded-lg px-4 py-2 cursor-pointer transition-colors"
               >
-                {tripType === "return" ? "Hin- und Rückflug" : "Nur Hinflug"}
+                {tripType === "return" ? t("hero.roundTrip") : t("hero.oneWay")}
                 <ChevronDown className="h-3 w-3" />
               </button>
             </div>
@@ -567,8 +570,8 @@ export function SearchHero() {
                   id="origin"
                   displayValue={originLabel}
                   onChange={(label, code) => { setOriginLabel(label); setOriginCode(code) }}
-                  placeholder="Stadt oder Flughafen"
-                  label="Von"
+                  placeholder={t("hero.cityOrAirport")}
+                  label={t("hero.fromLabel")}
                 />
               </div>
 
@@ -585,8 +588,8 @@ export function SearchHero() {
                   id="dest"
                   displayValue={destLabel}
                   onChange={(label, code) => { setDestLabel(label); setDestCode(code) }}
-                  placeholder="Land, Stadt oder Flughafen"
-                  label="Nach"
+                  placeholder={t("hero.cityOrAirport")}
+                  label={t("hero.toLabel")}
                   isDestination
                 />
               </div>
@@ -595,12 +598,12 @@ export function SearchHero() {
               <div className="relative flex-1 px-5 py-3 border-b md:border-b-0 md:border-r border-border min-w-0">
                 <DatePicker
                   id="dep"
-                  label="Hinflug"
+                  label={t("hero.departure")}
                   value={depDate}
                   flexMonth={depFlex}
                   onChange={setDepDate}
                   onFlexChange={setDepFlex}
-                  placeholder="Datum hinzufügen"
+                  placeholder={t("hero.addDate")}
                   originCode={originCode}
                   destCode={destCode}
                 />
@@ -611,12 +614,12 @@ export function SearchHero() {
                 <div className="relative flex-1 px-5 py-3 border-b md:border-b-0 md:border-r border-border min-w-0">
                   <DatePicker
                     id="ret"
-                    label="Rückflug"
+                    label={t("hero.return")}
                     value={retDate}
                     flexMonth={retFlex}
                     onChange={setRetDate}
                     onFlexChange={setRetFlex}
-                    placeholder="Datum hinzufügen"
+                    placeholder={t("hero.addDate")}
                     originCode={destCode}
                     destCode={originCode}
                   />
@@ -640,10 +643,10 @@ export function SearchHero() {
           {/* Stats */}
           <div className="flex flex-wrap justify-center gap-8 md:gap-12 mt-8 text-center">
             {[
-              { val: "1.2M+", label: "Preise analysiert" },
-              { val: "47%", label: "Ø Ersparnis" },
-              { val: "500+", label: "Airlines & Hotels" },
-              { val: "24/7", label: "Echtzeit" },
+              { val: "1.2M+", label: t("hero.stats.analyzed") },
+              { val: "47%", label: t("hero.stats.savings") },
+              { val: "500+", label: t("hero.stats.airlines") },
+              { val: "24/7", label: t("hero.stats.realtime") },
             ].map((s) => (
               <div key={s.val}>
                 <div className="text-xl font-bold text-white">{s.val}</div>
