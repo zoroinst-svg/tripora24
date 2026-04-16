@@ -3,14 +3,15 @@
 import Link from "next/link"
 import { Card } from "@/components/ui/card"
 import { MapPinIcon } from "@/components/ui/icons"
+import { getCityImage } from "@/lib/utils/images"
 
 const DESTINATIONS = [
-  { name: "Mallorca", code: "PMI", country: "Spanien", image: "https://images.unsplash.com/photo-1583245177184-4ab73f4ec1ff?w=400&h=250&fit=crop", fromPrice: 49 },
-  { name: "Antalya", code: "AYT", country: "Türkei", image: "https://images.unsplash.com/photo-1605537964030-feac06f04437?w=400&h=250&fit=crop", fromPrice: 159 },
-  { name: "Kreta", code: "HER", country: "Griechenland", image: "https://images.unsplash.com/photo-1601581875309-fafbf2d3ed3a?w=400&h=250&fit=crop", fromPrice: 89 },
-  { name: "Barcelona", code: "BCN", country: "Spanien", image: "https://images.unsplash.com/photo-1583422409516-2895a77efbed?w=400&h=250&fit=crop", fromPrice: 29 },
-  { name: "Lissabon", code: "LIS", country: "Portugal", image: "https://images.unsplash.com/photo-1585208798174-6cedd86e019a?w=400&h=250&fit=crop", fromPrice: 69 },
-  { name: "Hurghada", code: "HRG", country: "Ägypten", image: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=400&h=250&fit=crop", fromPrice: 199 },
+  { name: "Mallorca", code: "PMI", country: "Spanien", fromPrice: 49 },
+  { name: "Antalya", code: "AYT", country: "Türkei", fromPrice: 159 },
+  { name: "Kreta", code: "HER", country: "Griechenland", fromPrice: 89 },
+  { name: "Barcelona", code: "BCN", country: "Spanien", fromPrice: 29 },
+  { name: "Lissabon", code: "LIS", country: "Portugal", fromPrice: 69 },
+  { name: "Hurghada", code: "HRG", country: "Ägypten", fromPrice: 199 },
 ]
 
 export function PopularDestinations() {
@@ -27,7 +28,7 @@ export function PopularDestinations() {
             <Link key={dest.code} href={`/fluege?from=DE&to=${dest.code}`}>
               <Card className="overflow-hidden group cursor-pointer hover:shadow-lg transition-all">
                 <div className="relative h-32">
-                  <img src={dest.image} alt={dest.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <img src={getCityImage(dest.code)} alt={dest.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                   <div className="absolute bottom-2 left-3 text-white">
                     <div className="font-semibold text-sm">{dest.name}</div>
