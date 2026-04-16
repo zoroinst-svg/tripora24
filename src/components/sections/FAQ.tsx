@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { ChevronDown } from "lucide-react"
+import { ChevronDownIcon } from "@/components/ui/icons"
 
 const FAQS = [
   {
@@ -10,7 +10,7 @@ const FAQS = [
   },
   {
     q: "Sind die angezeigten Preise garantiert?",
-    a: "Wir zeigen dir Richtwerte, die wir von unseren Partnern erhalten. Die Preise können sich im Laufe des Tages ändern — Airlines passen ihre Preise oft mehrmals täglich an. Deshalb zeigen wir die Preise mit ‚ab ~XX€‘ und du siehst beim Klick auf den Anbieter den finalen Preis.",
+    a: "Wir zeigen dir Richtwerte, die wir von unseren Partnern erhalten. Die Preise können sich im Laufe des Tages ändern — Airlines passen ihre Preise oft mehrmals täglich an. Deshalb zeigen wir die Preise mit ‚ab ~XX€' und du siehst beim Klick auf den Anbieter den finalen Preis.",
   },
   {
     q: "Kostet die Nutzung von Tripora24 etwas?",
@@ -22,7 +22,7 @@ const FAQS = [
   },
   {
     q: "Wie finde ich den günstigsten Flug?",
-    a: "Sei flexibel bei Datum und Flughafen. Nutze unsere ‚Flexible Reisedaten‘ Funktion, um die günstigsten Tage zu finden. Buche idealerweise 6-8 Wochen vor Abflug. Vermeide Wochenenden und Schulferien. Mit unserem Preis-Alert wirst du benachrichtigt, sobald der Preis fällt.",
+    a: "Sei flexibel bei Datum und Flughafen. Nutze unsere ‚Flexible Reisedaten' Funktion, um die günstigsten Tage zu finden. Buche idealerweise 6-8 Wochen vor Abflug. Vermeide Wochenenden und Schulferien. Mit unserem Preis-Alert wirst du benachrichtigt, sobald der Preis fällt.",
   },
   {
     q: "Wie kann ich einen Preis-Alert setzen?",
@@ -58,7 +58,7 @@ export function FAQ() {
                 className="w-full flex items-center justify-between p-5 text-left cursor-pointer hover:bg-muted/50 rounded-2xl transition-colors"
               >
                 <span className="font-semibold text-base pr-4">{faq.q}</span>
-                <ChevronDown
+                <ChevronDownIcon
                   className={`h-5 w-5 text-muted-foreground shrink-0 transition-transform duration-300 ${openIndex === i ? "rotate-180" : ""}`}
                 />
               </button>

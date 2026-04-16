@@ -1,24 +1,24 @@
-import { Search, TrendingDown, Bell, Zap } from "lucide-react"
+import { SearchIcon, FlameIcon, BellIcon, SparklesIcon } from "@/components/ui/icons"
 import { Card, CardContent } from "@/components/ui/card"
 
 const STEPS = [
   {
-    icon: Search,
+    icon: SearchIcon,
     title: "Multi-Suche",
-    description: "Wir durchsuchen gleichzeitig Amadeus, Kiwi, Travelpayouts und mehr — du bekommst Ergebnisse die du nirgendwo sonst findest.",
+    description: "Wir durchsuchen gleichzeitig Aviasales, Kiwi, Travelpayouts und mehr — du bekommst Ergebnisse die du nirgendwo sonst findest.",
   },
   {
-    icon: TrendingDown,
+    icon: FlameIcon,
     title: "Deal-Score",
     description: "Unser Algorithmus vergleicht jeden Preis mit dem Durchschnitt der letzten 90 Tage. So siehst du sofort ob ein Preis wirklich günstig ist.",
   },
   {
-    icon: Zap,
+    icon: SparklesIcon,
     title: "Smart Tricks",
     description: "Split-Tickets, Multi-Airport, flexible Daten — wir nutzen die gleichen Tricks wie Reise-Profis. Automatisch.",
   },
   {
-    icon: Bell,
+    icon: BellIcon,
     title: "Preis-Alerts",
     description: "Setze einen Zielpreis und wir benachrichtigen dich, sobald dein Wunschflug günstiger wird.",
   },

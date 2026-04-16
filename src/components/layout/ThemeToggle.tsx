@@ -2,7 +2,7 @@
 
 import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
-import { Moon, Sun } from "lucide-react"
+import { MoonIcon, SunIcon } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 
 export function ThemeToggle() {
@@ -13,7 +13,7 @@ export function ThemeToggle() {
   if (!mounted) {
     return (
       <Button variant="ghost" size="icon" className="text-white/80 hover:text-white hover:bg-white/10">
-        <Sun className="h-4 w-4" />
+        <SunIcon className="h-4 w-4" />
       </Button>
     )
   }
@@ -28,7 +28,7 @@ export function ThemeToggle() {
       title={isDark ? "Light Mode" : "Dark Mode"}
       className="text-white/80 hover:text-white hover:bg-white/10"
     >
-      {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+      {isDark ? <SunIcon className="h-4 w-4" /> : <MoonIcon className="h-4 w-4" />}
     </Button>
   )
 }

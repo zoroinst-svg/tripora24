@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { ARTICLES } from "@/lib/blog/articles"
 import { Card } from "@/components/ui/card"
-import { ArrowRight, BookOpen } from "lucide-react"
+import { ArrowRightIcon, BookOpenIcon } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 
 export function BlogPreview() {
@@ -13,14 +13,14 @@ export function BlogPreview() {
         <div className="flex items-end justify-between mb-8">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <BookOpen className="h-5 w-5 text-primary" />
+              <BookOpenIcon className="h-5 w-5 text-primary" />
               <h2 className="text-2xl md:text-3xl font-bold">Reise-Inspiration</h2>
             </div>
             <p className="text-muted-foreground">Tipps, Tricks und Geheimtipps für deine nächste Reise</p>
           </div>
           <Link href="/blog" className="hidden md:block">
             <Button variant="outline" className="gap-2">
-              Alle Artikel <ArrowRight className="h-4 w-4" />
+              Alle Artikel <ArrowRightIcon className="h-4 w-4" />
             </Button>
           </Link>
         </div>
@@ -43,7 +43,7 @@ export function BlogPreview() {
                   <div className="flex items-center justify-between mt-4 text-xs text-muted-foreground">
                     <span>{article.readTime} Lesezeit</span>
                     <span className="text-primary font-semibold flex items-center gap-1">
-                      Lesen <ArrowRight className="h-3 w-3" />
+                      Lesen <ArrowRightIcon className="h-3 w-3" />
                     </span>
                   </div>
                 </div>
@@ -55,7 +55,7 @@ export function BlogPreview() {
         <div className="mt-8 text-center md:hidden">
           <Link href="/blog">
             <Button variant="outline" className="gap-2">
-              Alle Artikel ansehen <ArrowRight className="h-4 w-4" />
+              Alle Artikel ansehen <ArrowRightIcon className="h-4 w-4" />
             </Button>
           </Link>
         </div>

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import Link from "next/link"
-import { Cookie } from "lucide-react"
+import { CookieIcon } from "@/components/ui/icons"
 
 export function CookieBanner() {
   const [show, setShow] = useState(false)
@@ -29,7 +29,7 @@ export function CookieBanner() {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 p-4 md:p-6">
       <Card className="max-w-2xl mx-auto p-4 md:p-5 shadow-2xl border bg-background flex flex-col md:flex-row items-start md:items-center gap-4">
-        <Cookie className="h-8 w-8 text-primary shrink-0 hidden md:block" />
+        <CookieIcon className="h-8 w-8 text-primary shrink-0 hidden md:block" />
         <div className="flex-1">
           <p className="text-sm">
             Wir verwenden Cookies und Affiliate-Links um dir die besten Deals zu zeigen. Mit &quot;Akzeptieren&quot; stimmst du unserer{" "}

@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useState } from "react"
-import { HelpCircle, Heart, User, Menu, X, BookOpen } from "lucide-react"
+import { HelpIcon, HeartIcon, UserIcon, MenuIcon, CloseIcon, BookOpenIcon } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "./ThemeToggle"
 
@@ -14,11 +14,7 @@ export function Header() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 group">
-          <img
-            src="/trivoralogo.png"
-            alt="Tripora24"
-            className="h-9 w-9 object-contain"
-          />
+          <img src="/trivoralogo.png" alt="Tripora24" className="h-9 w-9 object-contain" />
           <span className="text-xl font-bold tracking-tight text-white">
             Tripora<span className="text-[#F08C3D]">24</span>
           </span>
@@ -28,62 +24,57 @@ export function Header() {
         <div className="hidden md:flex items-center gap-1">
           <Link href="/blog">
             <Button variant="ghost" size="sm" className="text-white/80 hover:text-white hover:bg-white/10 gap-2">
-              <BookOpen className="h-4 w-4" />
+              <BookOpenIcon className="h-4 w-4" />
               Blog
             </Button>
           </Link>
           <Link href="#faq">
             <Button variant="ghost" size="sm" className="text-white/80 hover:text-white hover:bg-white/10 gap-2">
-              <HelpCircle className="h-4 w-4" />
+              <HelpIcon className="h-4 w-4" />
               Hilfe
             </Button>
           </Link>
           <Link href="/alerts">
             <Button variant="ghost" size="icon" className="text-white/80 hover:text-white hover:bg-white/10" title="Preis-Alerts">
-              <Heart className="h-4 w-4" />
+              <HeartIcon className="h-4 w-4" />
             </Button>
           </Link>
           <ThemeToggle />
           <Link href="/profil">
             <Button variant="ghost" size="sm" className="text-white/80 hover:text-white hover:bg-white/10 gap-2">
-              <User className="h-4 w-4" />
+              <UserIcon className="h-4 w-4" />
               Anmelden
             </Button>
           </Link>
         </div>
 
-        {/* Mobile Menu Toggle */}
+        {/* Mobile */}
         <div className="flex md:hidden items-center gap-1">
           <ThemeToggle />
           <Button variant="ghost" size="icon" className="text-white hover:bg-white/10" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {mobileMenuOpen ? <CloseIcon className="h-5 w-5" /> : <MenuIcon className="h-5 w-5" />}
           </Button>
         </div>
       </div>
 
-      {/* Mobile Menu */}
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-white/10 bg-[#05203c] p-4">
           <nav className="flex flex-col gap-1">
-            <Link href="/fluege" onClick={() => setMobileMenuOpen(false)}>
-              <Button variant="ghost" className="w-full justify-start text-white hover:bg-white/10">Flüge</Button>
-            </Link>
-            <Link href="/hotels" onClick={() => setMobileMenuOpen(false)}>
-              <Button variant="ghost" className="w-full justify-start text-white hover:bg-white/10">Hotels</Button>
-            </Link>
-            <Link href="/pauschalreisen" onClick={() => setMobileMenuOpen(false)}>
-              <Button variant="ghost" className="w-full justify-start text-white hover:bg-white/10">Pauschalreisen</Button>
-            </Link>
-            <Link href="/blog" onClick={() => setMobileMenuOpen(false)}>
-              <Button variant="ghost" className="w-full justify-start text-white hover:bg-white/10">Blog</Button>
-            </Link>
-            <Link href="/alerts" onClick={() => setMobileMenuOpen(false)}>
-              <Button variant="ghost" className="w-full justify-start text-white hover:bg-white/10">Preis-Alerts</Button>
-            </Link>
+            {[
+              { href: "/fluege", label: "Flüge" },
+              { href: "/hotels", label: "Hotels" },
+              { href: "/pauschalreisen", label: "Pauschalreisen" },
+              { href: "/blog", label: "Blog" },
+              { href: "/alerts", label: "Preis-Alerts" },
+            ].map((item) => (
+              <Link key={item.href} href={item.href} onClick={() => setMobileMenuOpen(false)}>
+                <Button variant="ghost" className="w-full justify-start text-white hover:bg-white/10">{item.label}</Button>
+              </Link>
+            ))}
             <div className="border-t border-white/10 my-2" />
             <Link href="/profil" onClick={() => setMobileMenuOpen(false)}>
               <Button variant="ghost" className="w-full justify-start text-white hover:bg-white/10 gap-2">
-                <User className="h-4 w-4" /> Anmelden
+                <UserIcon className="h-4 w-4" /> Anmelden
               </Button>
             </Link>
           </nav>

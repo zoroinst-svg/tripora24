@@ -1,35 +1,35 @@
 "use client"
 
 import Link from "next/link"
-import { Hotel, Car, Package, Globe } from "lucide-react"
+import { HotelIcon, CarIcon, PackageIcon, GlobeIcon } from "@/components/ui/icons"
 
 const ACTIONS = [
   {
     href: "/hotels",
     label: "Hotels",
     description: "Über 2 Mio. Unterkünfte",
-    icon: Hotel,
+    icon: HotelIcon,
     color: "from-blue-500 to-blue-600",
   },
   {
     href: "/fluege?from=DE",
     label: "Mietwagen",
     description: "Bei 900+ Anbietern",
-    icon: Car,
+    icon: CarIcon,
     color: "from-emerald-500 to-emerald-600",
   },
   {
     href: "/pauschalreisen",
     label: "Pauschalreisen",
     description: "Flug + Hotel kombiniert",
-    icon: Package,
+    icon: PackageIcon,
     color: "from-amber-500 to-orange-500",
   },
   {
     href: "/fluege?from=DE&to=EVERYWHERE",
     label: "Alle Orte erkunden",
     description: "Wohin auch immer",
-    icon: Globe,
+    icon: GlobeIcon,
     color: "from-purple-500 to-pink-500",
   },
 ]
