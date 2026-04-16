@@ -2,8 +2,11 @@
 
 import Link from "next/link"
 import { ArrowRightIcon, SparklesIcon } from "@/components/ui/icons"
+import { useI18n } from "@/lib/i18n/context"
 
 export function PromoBanner() {
+  const { t } = useI18n()
+
   return (
     <section className="container mx-auto px-4 py-8">
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 shadow-2xl">
@@ -16,17 +19,17 @@ export function PromoBanner() {
           <div className="text-white">
             <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur px-3 py-1.5 rounded-full text-xs font-semibold mb-4">
               <SparklesIcon className="h-3 w-3" />
-              Neu bei Tripora24
+              {t("promo.badge")}
             </div>
             <h2 className="text-3xl md:text-4xl font-bold mb-3 leading-tight">
-              So günstig wie noch nie reisen
+              {t("promo.title")}
             </h2>
             <p className="text-blue-100 mb-6 text-base md:text-lg">
-              Entdecke unsere 7 Profi-Tricks und spare bis zu 60% auf deinem nächsten Flug. Kostenlos und in 5 Minuten gelesen.
+              {t("promo.subtitle")}
             </p>
             <Link href="/blog/guenstig-reisen">
               <button className="inline-flex items-center gap-2 bg-white text-blue-700 font-bold px-6 py-3 rounded-xl hover:bg-blue-50 transition-all hover:scale-105 shadow-lg cursor-pointer">
-                Unser Guide
+                {t("promo.cta")}
                 <ArrowRightIcon className="h-4 w-4" />
               </button>
             </Link>
@@ -35,7 +38,7 @@ export function PromoBanner() {
           <div className="relative h-48 md:h-64 rounded-2xl overflow-hidden hidden md:block">
             <img
               src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&h=400&fit=crop"
-              alt="Reise"
+              alt="Travel"
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-blue-900/40 to-transparent" />

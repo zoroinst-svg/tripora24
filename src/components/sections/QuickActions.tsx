@@ -2,15 +2,18 @@
 
 import Link from "next/link"
 import { HotelIcon, CarIcon, PackageIcon, GlobeIcon } from "@/components/ui/icons"
-
-const ACTIONS = [
-  { href: "/hotels", label: "Hotels", icon: HotelIcon },
-  { href: "/fluege?from=DE", label: "Mietwagen", icon: CarIcon },
-  { href: "/pauschalreisen", label: "Pauschalreisen", icon: PackageIcon },
-  { href: "/fluege?from=DE&to=EVERYWHERE", label: "Alle Orte erkunden", icon: GlobeIcon },
-]
+import { useI18n } from "@/lib/i18n/context"
 
 export function QuickActions() {
+  const { t } = useI18n()
+
+  const ACTIONS = [
+    { href: "/hotels", label: t("quickActions.hotels"), icon: HotelIcon },
+    { href: "/fluege?from=DE", label: t("quickActions.carRental"), icon: CarIcon },
+    { href: "/pauschalreisen", label: t("quickActions.packages"), icon: PackageIcon },
+    { href: "/fluege?from=DE&to=EVERYWHERE", label: t("quickActions.explore"), icon: GlobeIcon },
+  ]
+
   return (
     <section className="py-6 relative z-10">
       <div className="container mx-auto px-4">

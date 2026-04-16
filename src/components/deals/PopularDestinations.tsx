@@ -4,6 +4,7 @@ import Link from "next/link"
 import { Card } from "@/components/ui/card"
 import { MapPinIcon } from "@/components/ui/icons"
 import { getCityImage } from "@/lib/utils/images"
+import { useI18n } from "@/lib/i18n/context"
 
 const DESTINATIONS = [
   { name: "Mallorca", code: "PMI", country: "Spanien", fromPrice: 49 },
@@ -15,12 +16,13 @@ const DESTINATIONS = [
 ]
 
 export function PopularDestinations() {
+  const { t } = useI18n()
   return (
     <section className="py-16 bg-background">
       <div className="container mx-auto px-4">
         <div className="text-center mb-10">
-          <h2 className="text-2xl md:text-3xl font-bold mb-3">Beliebte Reiseziele</h2>
-          <p className="text-muted-foreground">Die Top-Destinationen ab DACH — mit aktuellen Bestpreisen</p>
+          <h2 className="text-2xl md:text-3xl font-bold mb-3">{t("popular.title")}</h2>
+          <p className="text-muted-foreground">{t("popular.subtitle")}</p>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">

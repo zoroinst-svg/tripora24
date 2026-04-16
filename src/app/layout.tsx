@@ -6,6 +6,7 @@ import { Footer } from "@/components/layout/Footer"
 import { ThemeProvider } from "@/components/layout/ThemeProvider"
 import { CookieBanner } from "@/components/layout/CookieBanner"
 import { OrganizationJsonLd, WebsiteJsonLd } from "@/components/seo/JsonLd"
+import { I18nProvider } from "@/lib/i18n/context"
 
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-sans",
@@ -55,10 +56,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="min-h-full flex flex-col">
         <ThemeProvider>
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
-          <CookieBanner />
+          <I18nProvider>
+            <Header />
+            <main className="flex-1">{children}</main>
+            <Footer />
+            <CookieBanner />
+          </I18nProvider>
         </ThemeProvider>
       </body>
     </html>

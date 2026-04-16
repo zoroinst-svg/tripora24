@@ -5,9 +5,12 @@ import { useState } from "react"
 import { HelpIcon, HeartIcon, UserIcon, MenuIcon, CloseIcon, BookOpenIcon } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "./ThemeToggle"
+import { LocaleSelector } from "./LocaleSelector"
+import { useI18n } from "@/lib/i18n/context"
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const { t } = useI18n()
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#05203c] text-white">
@@ -25,25 +28,26 @@ export function Header() {
           <Link href="/blog">
             <Button variant="ghost" size="sm" className="text-white/80 hover:text-white hover:bg-white/10 gap-2">
               <BookOpenIcon className="h-4 w-4" />
-              Blog
+              {t("common.blog")}
             </Button>
           </Link>
           <Link href="#faq">
             <Button variant="ghost" size="sm" className="text-white/80 hover:text-white hover:bg-white/10 gap-2">
               <HelpIcon className="h-4 w-4" />
-              Hilfe
+              {t("common.help")}
             </Button>
           </Link>
           <Link href="/alerts">
-            <Button variant="ghost" size="icon" className="text-white/80 hover:text-white hover:bg-white/10" title="Preis-Alerts">
+            <Button variant="ghost" size="icon" className="text-white/80 hover:text-white hover:bg-white/10" title={t("nav.priceAlerts")}>
               <HeartIcon className="h-4 w-4" />
             </Button>
           </Link>
+          <LocaleSelector />
           <ThemeToggle />
           <Link href="/profil">
             <Button variant="ghost" size="sm" className="text-white/80 hover:text-white hover:bg-white/10 gap-2">
               <UserIcon className="h-4 w-4" />
-              Anmelden
+              {t("common.login")}
             </Button>
           </Link>
         </div>

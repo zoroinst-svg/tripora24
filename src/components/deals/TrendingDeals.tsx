@@ -6,8 +6,10 @@ import { DealCard } from "./DealCard"
 import { Button } from "@/components/ui/button"
 import { ArrowRightIcon, FlameIcon, SpinnerIcon } from "@/components/ui/icons"
 import Link from "next/link"
+import { useI18n } from "@/lib/i18n/context"
 
 export function TrendingDeals() {
+  const { t } = useI18n()
   const [deals, setDeals] = useState<TrendingDeal[]>(MOCK_TRENDING_DEALS)
   const [loading, setLoading] = useState(true)
 
@@ -28,13 +30,13 @@ export function TrendingDeals() {
           <div>
             <div className="flex items-center gap-2 mb-2">
               <FlameIcon className="h-5 w-5 text-orange-500" />
-              <h2 className="text-2xl md:text-3xl font-bold">Trending Deals</h2>
+              <h2 className="text-2xl md:text-3xl font-bold">{t("trending.title")}</h2>
             </div>
-            <p className="text-muted-foreground">Die besten aktuellen Angebote — von unserer Deal-Engine gefunden</p>
+            <p className="text-muted-foreground">{t("trending.subtitle")}</p>
           </div>
           <Link href="/deals">
             <Button variant="outline" className="gap-2 hidden md:flex">
-              Alle Deals <ArrowRightIcon className="h-4 w-4" />
+              {t("trending.allDeals")} <ArrowRightIcon className="h-4 w-4" />
             </Button>
           </Link>
         </div>
@@ -42,7 +44,7 @@ export function TrendingDeals() {
         {loading ? (
           <div className="text-center py-12">
             <SpinnerIcon className="h-8 w-8 text-primary mx-auto animate-spin" />
-            <p className="text-sm text-muted-foreground mt-3">Deals werden geladen...</p>
+            <p className="text-sm text-muted-foreground mt-3">{t("trending.loadingDeals")}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
