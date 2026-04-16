@@ -4,34 +4,10 @@ import Link from "next/link"
 import { HotelIcon, CarIcon, PackageIcon, GlobeIcon } from "@/components/ui/icons"
 
 const ACTIONS = [
-  {
-    href: "/hotels",
-    label: "Hotels",
-    description: "Über 2 Mio. Unterkünfte",
-    icon: HotelIcon,
-    color: "from-blue-500 to-blue-600",
-  },
-  {
-    href: "/fluege?from=DE",
-    label: "Mietwagen",
-    description: "Bei 900+ Anbietern",
-    icon: CarIcon,
-    color: "from-emerald-500 to-emerald-600",
-  },
-  {
-    href: "/pauschalreisen",
-    label: "Pauschalreisen",
-    description: "Flug + Hotel kombiniert",
-    icon: PackageIcon,
-    color: "from-amber-500 to-orange-500",
-  },
-  {
-    href: "/fluege?from=DE&to=EVERYWHERE",
-    label: "Alle Orte erkunden",
-    description: "Wohin auch immer",
-    icon: GlobeIcon,
-    color: "from-purple-500 to-pink-500",
-  },
+  { href: "/hotels", label: "Hotels", description: "Über 2 Mio. Unterkünfte", icon: HotelIcon },
+  { href: "/fluege?from=DE", label: "Mietwagen", description: "Bei 900+ Anbietern", icon: CarIcon },
+  { href: "/pauschalreisen", label: "Pauschalreisen", description: "Flug + Hotel kombiniert", icon: PackageIcon },
+  { href: "/fluege?from=DE&to=EVERYWHERE", label: "Alle Orte erkunden", description: "Wohin auch immer", icon: GlobeIcon },
 ]
 
 export function QuickActions() {
@@ -43,16 +19,13 @@ export function QuickActions() {
             <Link
               key={action.href}
               href={action.href}
-              className={`animate-fade-in-up stagger-${i + 1} group relative overflow-hidden rounded-2xl bg-card border shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 p-5`}
+              className={`animate-fade-in-up stagger-${i + 1} group rounded-2xl bg-card border shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 p-5`}
             >
-              <div className={`absolute inset-0 bg-gradient-to-br ${action.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`} />
-              <div className="relative">
-                <div className={`inline-flex items-center justify-center h-12 w-12 rounded-xl bg-gradient-to-br ${action.color} text-white mb-3 shadow-md group-hover:scale-110 transition-transform duration-300`}>
-                  <action.icon className="h-6 w-6" />
-                </div>
-                <h3 className="font-bold text-base">{action.label}</h3>
-                <p className="text-xs text-muted-foreground mt-1">{action.description}</p>
+              <div className="inline-flex items-center justify-center h-11 w-11 rounded-xl bg-muted text-foreground mb-3 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                <action.icon className="h-5 w-5" />
               </div>
+              <h3 className="font-bold text-base">{action.label}</h3>
+              <p className="text-xs text-muted-foreground mt-1">{action.description}</p>
             </Link>
           ))}
         </div>
