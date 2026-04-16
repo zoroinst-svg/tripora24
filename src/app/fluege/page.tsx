@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation"
 import { Suspense } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { getCountryCode, getCity, getCountryName as getCountryNameFromDB, isKnownCountry } from "@/lib/data/iata-database"
+import { getCountryCode, getCity, getCountryName as getCountryNameFromDB, isKnownCountry, COUNTRY_NAMES } from "@/lib/data/iata-database"
 import { getCountryImage, getCityImage } from "@/lib/utils/images"
 import type { FlightOffer } from "@/lib/deal-engine/mock-data"
 import { Plane, Search, Loader2, AlertCircle, ArrowRight, ChevronLeft } from "lucide-react"
@@ -75,12 +75,22 @@ function ExploreCountries({ flights, month, onSelectCountry }: {
   const [filter, setFilter] = useState("Günstigste Flüge")
   const filtered = filter === "Direktflüge" ? countries.filter(c => c.stops === 0) : countries
 
+  // All countries from COUNTRY_NAMES that are NOT in the API results and NOT origin countries
+  const apiCountryCodes = new Set(countries.map(c => c.code))
+  const originCountries = new Set(["DE", "AT", "CH"])
+  const remainingCountries = Object.entries(COUNTRY_NAMES)
+    .filter(([code]) => !apiCountryCodes.has(code) && !originCountries.has(code))
+    .map(([code, name]) => ({ code, name }))
+    .sort((a, b) => a.name.localeCompare(b.name, "de"))
+
+  const totalCountries = countries.length + remainingCountries.length
+
   return (
     <div>
       <h2 className="text-2xl md:text-3xl font-bold mb-2">
         Alle Orte {month ? `im ${getMonthName(month)}` : ""} erkunden
       </h2>
-      <p className="text-muted-foreground mb-6">{countries.length} Länder gefunden · Wähle ein Land um Städte zu sehen</p>
+      <p className="text-muted-foreground mb-6">{totalCountries} Länder · Wähle ein Land um Flüge zu sehen</p>
 
       <div className="flex gap-2 mb-6 overflow-x-auto pb-2 no-scrollbar">
         {["Günstigste Flüge", "Direktflüge"].map(t => (
@@ -90,6 +100,7 @@ function ExploreCountries({ flights, month, onSelectCountry }: {
         ))}
       </div>
 
+      {/* Countries WITH prices from API */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filtered.map((country, i) => (
           <Card key={country.code}
@@ -124,7 +135,34 @@ function ExploreCountries({ flights, month, onSelectCountry }: {
         ))}
       </div>
 
-      {filtered.length === 0 && (
+      {/* ALL other countries WITHOUT prices — always shown */}
+      {filter !== "Direktflüge" && remainingCountries.length > 0 && (
+        <>
+          <h3 className="text-lg font-bold mt-10 mb-4">Weitere Reiseziele</h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            {remainingCountries.map((country) => (
+              <Card key={country.code}
+                className="overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 cursor-pointer group"
+                onClick={() => onSelectCountry(country.code, country.name)}
+              >
+                <div className="h-28 overflow-hidden relative">
+                  <img src={getCountryImage(country.code)} alt={country.name}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  <div className="absolute bottom-2 left-3 right-3 text-white">
+                    <h3 className="font-bold text-sm drop-shadow-lg">{country.name}</h3>
+                  </div>
+                </div>
+                <CardContent className="p-3">
+                  <p className="text-xs text-muted-foreground">Preise suchen</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </>
+      )}
+
+      {filtered.length === 0 && remainingCountries.length === 0 && (
         <Card className="p-12 text-center">
           <Plane className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
           <h3 className="text-lg font-semibold">Keine Direktflüge gefunden</h3>
