@@ -255,11 +255,28 @@ function ExploreCities({ flights, countryCode, countryName, month, onSelectCity,
       </div>
 
       {filtered.length === 0 && (
-        <Card className="p-12 text-center">
-          <Plane className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-          <h3 className="text-lg font-semibold">Keine Direktflüge gefunden</h3>
-          <p className="text-muted-foreground mt-2">Wähle &quot;Günstigste Flüge&quot; für alle Verbindungen.</p>
-        </Card>
+        <div className="space-y-4">
+          <Card className="p-8 text-center">
+            <Plane className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
+            <h3 className="text-lg font-semibold mb-2">Für {countryName} haben wir aktuell keine gecachten Preise</h3>
+            <p className="text-muted-foreground text-sm mb-6">Suche direkt bei unseren Partnern nach verfügbaren Flügen:</p>
+            <div className="flex flex-wrap gap-3 justify-center">
+              {[
+                { name: "Skyscanner", url: `https://www.skyscanner.de/transport/fluge/de/${countryCode.toLowerCase()}/` },
+                { name: "Google Flights", url: `https://www.google.com/travel/flights?q=Flights+to+${encodeURIComponent(countryName)}+from+Germany` },
+                { name: "Kayak", url: `https://www.kayak.de/flights/DE-${countryCode}/` },
+                { name: "Kiwi.com", url: `https://www.kiwi.com/de/search/results/germany/${countryName.toLowerCase()}/` },
+              ].map((p) => (
+                <a key={p.name} href={p.url} target="_blank" rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-card border rounded-xl text-sm font-semibold hover:shadow-md hover:-translate-y-0.5 transition-all cursor-pointer"
+                >
+                  {p.name}
+                  <ArrowRight className="h-3 w-3" />
+                </a>
+              ))}
+            </div>
+          </Card>
+        </div>
       )}
     </div>
   )
