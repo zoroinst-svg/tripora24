@@ -64,8 +64,19 @@ export function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0)
   const faqs = FAQS[locale] || FAQS.de
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  }
+
   return (
     <section id="faq" className="container mx-auto px-4 py-16 scroll-mt-20">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <div className="max-w-3xl mx-auto">
         <h2 className="text-2xl md:text-3xl font-bold mb-2">{t("faq.title")}</h2>
         <p className="text-muted-foreground mb-8">{t("faq.subtitle")}</p>

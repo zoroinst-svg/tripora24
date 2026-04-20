@@ -3,7 +3,7 @@ import { notFound } from "next/navigation"
 import { ARTICLES, getArticleBySlug } from "@/lib/blog/articles"
 import { Button } from "@/components/ui/button"
 import { ChevronLeftIcon, ArrowRightIcon, CalendarIcon, ClockIcon } from "@/components/ui/icons"
-import { BlogPostingJsonLd } from "@/components/seo/JsonLd"
+import { BlogPostingJsonLd, BreadcrumbJsonLd } from "@/components/seo/JsonLd"
 import type { Metadata } from "next"
 
 export async function generateStaticParams() {
@@ -35,6 +35,13 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
         image={article.image}
         datePublished={article.publishedAt}
         url={`https://www.tripora24.com/blog/${article.slug}`}
+      />
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "https://www.tripora24.com" },
+          { name: "Blog", url: "https://www.tripora24.com/blog" },
+          { name: article.title, url: `https://www.tripora24.com/blog/${article.slug}` },
+        ]}
       />
       {/* Back Link */}
       <Link href="/blog" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6">

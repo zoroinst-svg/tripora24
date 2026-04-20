@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next"
 import { ARTICLES } from "@/lib/blog/articles"
+import { TOP_ROUTES, routeSlug } from "@/lib/data/top-routes"
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://www.tripora24.com"
@@ -23,6 +24,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${baseUrl}/blog/${a.slug}`,
       lastModified: new Date(a.publishedAt),
       changeFrequency: "weekly" as const,
+      priority: 0.7,
+    })),
+
+    // Programmatic flight routes
+    ...TOP_ROUTES.map((r) => ({
+      url: `${baseUrl}/fluege/${routeSlug(r.from, r.to)}`,
+      lastModified: now,
+      changeFrequency: "daily" as const,
       priority: 0.7,
     })),
   ]
