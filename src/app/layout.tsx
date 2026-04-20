@@ -44,7 +44,10 @@ export const metadata: Metadata = {
     title: "Tripora24 — Beste Reise-Deals im DACH-Raum",
     description: "Flüge, Hotels & Pauschalreisen zum Bestpreis. 24/7 automatische Deal-Erkennung.",
   },
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://tripora24.com"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://www.tripora24.com"),
+  alternates: {
+    canonical: "/",
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

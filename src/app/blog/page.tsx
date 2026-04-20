@@ -7,6 +7,7 @@ import type { Metadata } from "next"
 export const metadata: Metadata = {
   title: "Blog — Reise-Inspiration & Tipps",
   description: "Tipps, Tricks und Inspiration für günstige Reisen. Lerne von Profi-Reisenden, wie du bis zu 60% sparst.",
+  alternates: { canonical: "/blog" },
 }
 
 export default function BlogPage() {
