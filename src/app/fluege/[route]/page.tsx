@@ -4,6 +4,7 @@ import type { Metadata } from "next"
 import { getCity, getCountryCode, getCountryName } from "@/lib/data/iata-database"
 import { getCityImage } from "@/lib/utils/images"
 import { TOP_ROUTES, parseRouteSlug, routeSlug } from "@/lib/data/top-routes"
+import { getRouteStats, monthLabel, formatDuration } from "@/lib/apis/route-stats"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { PlaneIcon, ArrowRightIcon, ClockIcon, CalendarIcon } from "@/components/ui/icons"
@@ -50,45 +51,53 @@ export default async function RoutePage({ params }: { params: Promise<{ route: s
   const image = getCityImage(to)
   const url = `https://www.tripora24.com/fluege/${route}`
 
+  const stats = await getRouteStats(from, to)
+  const hasData = stats.flightsFound > 0
+
   const providers = [
-    {
-      name: "Skyscanner",
-      link: `https://www.skyscanner.de/transport/fluege/${from.toLowerCase()}/${to.toLowerCase()}/`,
-      badge: "Empfohlen",
-    },
-    {
-      name: "Aviasales",
-      link: `https://www.aviasales.com/search/${from}1${to}1?marker=tripora24`,
-      badge: null,
-    },
-    {
-      name: "Google Flights",
-      link: `https://www.google.com/flights?q=${from}+to+${to}`,
-      badge: null,
-    },
-    {
-      name: "Kiwi.com",
-      link: `https://www.kiwi.com/de/search/results/${fromCity}-${fromCountry}/${toCity}-${toCountry}`,
-      badge: null,
-    },
+    { name: "Skyscanner", link: `https://www.skyscanner.de/transport/fluege/${from.toLowerCase()}/${to.toLowerCase()}/`, badge: "Empfohlen" },
+    { name: "Aviasales", link: `https://www.aviasales.com/search/${from}1${to}1?marker=tripora24`, badge: null },
+    { name: "Google Flights", link: `https://www.google.com/flights?q=${from}+to+${to}`, badge: null },
+    { name: "Kiwi.com", link: `https://www.kiwi.com/de/search/results/${fromCity}-${fromCountry}/${toCity}-${toCountry}`, badge: null },
   ]
+
+  const priceRange = hasData && stats.cheapestPrice && stats.maxPrice
+    ? `${stats.cheapestPrice}€ – ${stats.maxPrice}€`
+    : "variabel"
+
+  const durationStr = formatDuration(stats.avgDurationMin)
+  const directPct = Math.round(stats.directFlightShare * 100)
+  const airlineList = stats.airlines.map((a) => a.name)
+  const airlineText = airlineList.length > 0
+    ? airlineList.slice(0, 6).join(", ") + (airlineList.length > 6 ? " und weitere" : "")
+    : "Lufthansa, Eurowings, Ryanair, Wizz Air und weitere"
 
   const faqs = [
     {
       q: `Wie lange dauert ein Flug von ${fromCity} nach ${toCity}?`,
-      a: `Die Flugdauer von ${fromCity} (${from}) nach ${toCity} (${to}) variiert je nach Airline und ob es ein Direktflug oder ein Flug mit Zwischenstopp ist. Direktflüge sind in der Regel die schnellste Option. Nutze unseren Preisvergleich oben, um aktuelle Flugzeiten einzusehen.`,
+      a: hasData && durationStr
+        ? `Die durchschnittliche Flugdauer von ${fromCity} (${from}) nach ${toCity} (${to}) beträgt ${durationStr}. ${directPct > 0 ? `${directPct}% der verfügbaren Flüge sind Direktflüge` : "Es sind überwiegend Flüge mit Zwischenstopp verfügbar"}. Direktflüge sind in der Regel schneller als Verbindungen mit Umstieg.`
+        : `Die Flugdauer von ${fromCity} (${from}) nach ${toCity} (${to}) variiert je nach Airline und ob Direktflug oder Zwischenstopp. Direktflüge sind die schnellste Option.`,
     },
     {
       q: `Welche Airlines fliegen von ${fromCity} nach ${toCity}?`,
-      a: `Auf der Strecke ${fromCity} – ${toCity} fliegen zahlreiche Airlines, darunter Lufthansa, Eurowings, Ryanair, Wizz Air und weitere. Welche Airline die günstigste ist, hängt vom gewählten Reisedatum ab. Tripora24 vergleicht automatisch alle verfügbaren Anbieter.`,
+      a: `Auf der Strecke ${fromCity} – ${toCity} fliegen ${airlineText}. Welche Airline am günstigsten ist, hängt vom Reisedatum ab. Tripora24 vergleicht automatisch alle verfügbaren Anbieter.`,
     },
     {
       q: `Wann ist die beste Reisezeit für Flüge nach ${toCity}?`,
-      a: `Die günstigsten Monate für einen Flug nach ${toCity} sind meistens in der Nebensaison (Frühling und Herbst). Vermeide Schulferien und große Feiertage. Dienstag und Mittwoch sind generell die günstigsten Wochentage zum Fliegen.`,
+      a: hasData && stats.cheapestMonth
+        ? `Laut aktuellen Preisdaten ist ${monthLabel(stats.cheapestMonth)} der günstigste Monat für einen Flug von ${fromCity} nach ${toCity}. Generell lohnen sich Frühjahr (April/Mai) und Herbst (September/Oktober) — dort fallen Schulferien weg und Preise sind niedriger.`
+        : `Die günstigsten Monate für einen Flug nach ${toCity} sind meistens in der Nebensaison (Frühling und Herbst). Vermeide Schulferien und große Feiertage. Dienstag und Mittwoch sind die günstigsten Wochentage zum Fliegen.`,
+    },
+    {
+      q: `Wie viel kostet ein Flug ${fromCity} ${toCity}?`,
+      a: hasData && stats.cheapestPrice
+        ? `Flüge ${fromCity} nach ${toCity} beginnen aktuell bei ca. ${stats.cheapestPrice}€ (Hin- und Rückflug). Der Durchschnittspreis liegt bei etwa ${stats.avgPrice}€. Mit flexiblen Daten und frühzeitiger Buchung kannst du oft noch günstiger fliegen.`
+        : `Die Preise für Flüge ${fromCity} – ${toCity} variieren stark nach Saison, Airline und Buchungszeitpunkt. Mit flexiblen Daten und Preis-Alerts findest du meistens gute Angebote.`,
     },
     {
       q: `Wie finde ich den günstigsten Flug ${fromCity} ${toCity}?`,
-      a: `Sei flexibel bei deinen Reisedaten, buche 6-8 Wochen vor Abflug und vergleiche mehrere Anbieter. Setze zusätzlich einen Preis-Alert bei Tripora24 — wir benachrichtigen dich kostenlos, sobald der Preis fällt.`,
+      a: `Sei flexibel bei Reisedaten, buche 6-8 Wochen vor Abflug und vergleiche mehrere Anbieter. Setze zusätzlich einen Preis-Alert bei Tripora24 — wir benachrichtigen dich kostenlos, sobald der Preis fällt.`,
     },
   ]
 
@@ -116,6 +125,7 @@ export default async function RoutePage({ params }: { params: Promise<{ route: s
         destination={toCity}
         originCode={from}
         destinationCode={to}
+        price={stats.cheapestPrice || undefined}
         url={url}
       />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
@@ -133,44 +143,99 @@ export default async function RoutePage({ params }: { params: Promise<{ route: s
           <h1 className="text-3xl md:text-5xl font-bold leading-tight">
             Flüge {fromCity} → {toCity}
           </h1>
-          <p className="text-sm md:text-base mt-2 opacity-90">Preisvergleich & aktuelle Angebote für {toCountry}</p>
+          <p className="text-sm md:text-base mt-2 opacity-90">
+            {hasData && stats.cheapestPrice
+              ? `Ab ${stats.cheapestPrice}€ · Preisvergleich für ${toCountry}`
+              : `Preisvergleich & aktuelle Angebote für ${toCountry}`}
+          </p>
         </div>
       </div>
 
-      {/* Quick Facts */}
+      {/* Live Price Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
         <Card className="p-4 text-center">
-          <PlaneIcon className="h-5 w-5 mx-auto mb-1 text-primary" />
-          <div className="text-xs text-muted-foreground">Route</div>
-          <div className="font-semibold text-sm">{from} → {to}</div>
+          <div className="text-xs text-muted-foreground mb-1">Ab-Preis (Hin+Rück)</div>
+          <div className="font-bold text-2xl text-primary">
+            {hasData && stats.cheapestPrice ? `${stats.cheapestPrice}€` : "—"}
+          </div>
+          {hasData && stats.avgPrice && (
+            <div className="text-xs text-muted-foreground mt-1">Ø {stats.avgPrice}€</div>
+          )}
         </Card>
         <Card className="p-4 text-center">
-          <CalendarIcon className="h-5 w-5 mx-auto mb-1 text-primary" />
-          <div className="text-xs text-muted-foreground">Beste Reisezeit</div>
-          <div className="font-semibold text-sm">Apr – Mai · Sep – Okt</div>
+          <div className="text-xs text-muted-foreground mb-1">Günstigster Monat</div>
+          <div className="font-bold text-lg">
+            {hasData && stats.cheapestMonth ? monthLabel(stats.cheapestMonth) : "Nebensaison"}
+          </div>
+          <div className="text-xs text-muted-foreground mt-1">Tiefstpreis</div>
         </Card>
         <Card className="p-4 text-center">
           <ClockIcon className="h-5 w-5 mx-auto mb-1 text-primary" />
-          <div className="text-xs text-muted-foreground">Buchen</div>
-          <div className="font-semibold text-sm">6–8 Wochen vorher</div>
+          <div className="text-xs text-muted-foreground">Ø Flugdauer</div>
+          <div className="font-semibold text-sm">{durationStr || "—"}</div>
         </Card>
         <Card className="p-4 text-center">
-          <ArrowRightIcon className="h-5 w-5 mx-auto mb-1 text-primary" />
-          <div className="text-xs text-muted-foreground">Zielland</div>
-          <div className="font-semibold text-sm">{toCountry}</div>
+          <PlaneIcon className="h-5 w-5 mx-auto mb-1 text-primary" />
+          <div className="text-xs text-muted-foreground">Direktflug-Anteil</div>
+          <div className="font-semibold text-sm">{hasData ? `${directPct}%` : "—"}</div>
         </Card>
       </div>
 
+      {/* Monthly Price Heatmap */}
+      {stats.monthlyPrices.length >= 3 && (
+        <Card className="p-5 mb-8">
+          <h2 className="text-lg font-bold mb-3">Preisverlauf nach Monat</h2>
+          <p className="text-sm text-muted-foreground mb-4">
+            Günstigste verfügbare Preise (Hin + Rück) pro Reisemonat für die Strecke {fromCity} – {toCity}.
+          </p>
+          <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
+            {stats.monthlyPrices.map((mp) => {
+              const isLowest = mp.month === stats.cheapestMonth
+              return (
+                <div key={mp.month} className={`rounded-lg p-3 text-center border ${isLowest ? "bg-primary/10 border-primary" : "bg-muted/30"}`}>
+                  <div className="text-xs text-muted-foreground">{monthLabel(mp.month).split(" ")[0].slice(0, 3)}</div>
+                  <div className={`font-bold text-base ${isLowest ? "text-primary" : ""}`}>{mp.minPrice}€</div>
+                  {isLowest && <div className="text-[10px] text-primary font-semibold mt-0.5">TIEFSTPREIS</div>}
+                </div>
+              )
+            })}
+          </div>
+        </Card>
+      )}
+
+      {/* Airlines auf der Route */}
+      {stats.airlines.length > 0 && (
+        <Card className="p-5 mb-8">
+          <h2 className="text-lg font-bold mb-3">Airlines auf dieser Route</h2>
+          <p className="text-sm text-muted-foreground mb-4">
+            Folgende Airlines bieten aktuell Flüge von {fromCity} nach {toCity} an (nach Häufigkeit sortiert).
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {stats.airlines.map((a) => (
+              <div key={a.code} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted text-sm">
+                <span className="font-semibold">{a.name}</span>
+                <span className="text-xs text-muted-foreground">{a.count} Angebote</span>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
+
       {/* Provider CTA */}
       <Card className="p-6 mb-10 bg-gradient-to-br from-primary/5 to-blue-50 dark:from-primary/10 dark:to-slate-900">
-        <h2 className="text-xl font-bold mb-4">Günstige Flüge {fromCity} – {toCity} vergleichen</h2>
+        <h2 className="text-xl font-bold mb-2">
+          {hasData && stats.cheapestPrice
+            ? `Günstige Flüge ${fromCity} – ${toCity} ab ${stats.cheapestPrice}€`
+            : `Günstige Flüge ${fromCity} – ${toCity} vergleichen`}
+        </h2>
         <p className="text-muted-foreground text-sm mb-4">
           Tripora24 durchsucht gleichzeitig über 500 Airlines und zeigt dir die günstigsten Optionen für deine Reise nach {toCity}.
+          {hasData && ` Aktuell haben wir ${stats.flightsFound} verfügbare Angebote für diese Strecke gefunden.`}
         </p>
         <div className="flex flex-wrap gap-3">
           <Link href={`/fluege?from=${from}&to=${to}`}>
             <Button size="lg" className="gap-2">
-              Jetzt Flüge suchen <ArrowRightIcon className="h-4 w-4" />
+              Jetzt {stats.flightsFound > 0 ? `${stats.flightsFound} ` : ""}Flüge suchen <ArrowRightIcon className="h-4 w-4" />
             </Button>
           </Link>
           {providers.map((p) => (
@@ -185,17 +250,31 @@ export default async function RoutePage({ params }: { params: Promise<{ route: s
       <article className="prose dark:prose-invert max-w-none mb-12">
         <h2>Alles zur Strecke {fromCity} nach {toCity}</h2>
         <p>
-          Du suchst einen <strong>günstigen Flug von {fromCity} nach {toCity}</strong>? Die Verbindung vom Flughafen {fromCity} ({from}) in {fromCountry} nach {toCity} ({to}) in {toCountry} gehört zu den beliebten Flugrouten. Mit Tripora24 findest du binnen weniger Sekunden die günstigsten Angebote aller großen Airlines — inklusive Billigflieger und Vollservice-Carrier.
+          Du suchst einen <strong>günstigen Flug von {fromCity} nach {toCity}</strong>? Die Verbindung vom Flughafen {fromCity} ({from}) in {fromCountry} nach {toCity} ({to}) in {toCountry} gehört zu den beliebten Flugrouten.
+          {hasData && stats.cheapestPrice && ` Aktuell beginnen die Preise bei ${stats.cheapestPrice}€ für Hin- und Rückflug, der Durchschnitt liegt bei ${stats.avgPrice}€.`}
+          {" "}Mit Tripora24 findest du binnen weniger Sekunden die günstigsten Angebote aller großen Airlines.
         </p>
 
         <h3>Welche Airlines fliegen {fromCity} – {toCity}?</h3>
         <p>
-          Auf dieser Route fliegen verschiedene Airlines, je nach Saison und Buchungszeitpunkt. Zu den häufigsten Anbietern gehören Lufthansa, Eurowings, Ryanair, Wizz Air, Vueling und Pegasus Airlines. Die Vielfalt sorgt für Konkurrenz und oft für günstige Preise — vor allem wenn du flexibel bist.
+          {stats.airlines.length > 0
+            ? `Auf dieser Strecke fliegen aktuell ${airlineList.length} Airlines — am häufigsten ${stats.airlines[0].name}${stats.airlines[1] ? ` und ${stats.airlines[1].name}` : ""}. Zu den weiteren Anbietern gehören ${airlineText}.`
+            : `Auf dieser Route fliegen verschiedene Airlines, je nach Saison und Buchungszeitpunkt. Zu den häufigsten Anbietern gehören Lufthansa, Eurowings, Ryanair, Wizz Air, Vueling und Pegasus Airlines.`}
+          {" "}Die Vielfalt sorgt für Konkurrenz und oft für günstige Preise — vor allem wenn du flexibel bist.
         </p>
 
         <h3>Beste Reisezeit für {toCity}</h3>
         <p>
-          Die günstigsten Preise für einen Flug nach {toCity} findest du typischerweise in der <strong>Nebensaison</strong> — also im Frühjahr (April, Mai) und Herbst (September, Oktober). In diesen Monaten ist das Wetter oft angenehm, die Preise deutlich niedriger als in der Hochsaison und die Ziele weniger überlaufen.
+          {hasData && stats.cheapestMonth
+            ? `Unsere aktuelle Preisanalyse zeigt: ${monthLabel(stats.cheapestMonth)} ist derzeit der günstigste Monat für einen Flug nach ${toCity}. Generell findest du in der Nebensaison (Frühjahr und Herbst) die besten Preise.`
+            : `Die günstigsten Preise für einen Flug nach ${toCity} findest du typischerweise in der Nebensaison — also im Frühjahr (April, Mai) und Herbst (September, Oktober). In diesen Monaten ist das Wetter oft angenehm, die Preise deutlich niedriger als in der Hochsaison.`}
+        </p>
+
+        <h3>Flugdauer und Verbindungen</h3>
+        <p>
+          {hasData && durationStr
+            ? `Die durchschnittliche Flugzeit auf dieser Route beträgt ${durationStr}. ${directPct >= 50 ? `Die meisten Flüge (${directPct}%) sind Direktverbindungen — du kommst also ohne Umsteigen an.` : directPct > 0 ? `${directPct}% der Flüge sind Direktverbindungen, der Rest erfolgt mit Zwischenstopp.` : `Die Verbindung erfolgt in der Regel mit Zwischenstopp.`}`
+            : `Die Flugdauer variiert je nach Airline und ob Direktflug oder Verbindung mit Umsteigen. Direktflüge sind am schnellsten, Verbindungen oft günstiger.`}
         </p>
 
         <h3>Spartipps für deinen Flug {fromCity} {toCity}</h3>
@@ -206,11 +285,6 @@ export default async function RoutePage({ params }: { params: Promise<{ route: s
           <li><strong>Preis-Alert setzen:</strong> Wir benachrichtigen dich kostenlos, sobald der Preis fällt.</li>
           <li><strong>Nur Handgepäck:</strong> Spart 30–80€ Gepäckgebühren bei Billigfliegern.</li>
         </ul>
-
-        <h3>Alternative Flughäfen</h3>
-        <p>
-          Prüfe auch nahegelegene Flughäfen in der Region {fromCountry}. Oft sind kleinere Airports wie Memmingen, Frankfurt-Hahn oder Weeze deutlich günstiger als die großen Drehkreuze — die Anfahrt lohnt sich häufig trotzdem.
-        </p>
       </article>
 
       {/* FAQ */}
@@ -243,6 +317,12 @@ export default async function RoutePage({ params }: { params: Promise<{ route: s
             ))}
         </div>
       </section>
+
+      {hasData && (
+        <div className="text-xs text-muted-foreground text-center mb-4">
+          Preisdaten zuletzt aktualisiert: {new Date(stats.updatedAt).toLocaleString("de-DE")}
+        </div>
+      )}
     </div>
   )
 }
