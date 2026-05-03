@@ -48,15 +48,8 @@ export function Header() {
     >
       <div className="container mx-auto flex h-16 items-center justify-between gap-4 px-4">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5 group shrink-0">
-          <div className="relative">
-            <div className="absolute inset-0 rounded-full bg-[#F08C3D]/40 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <img
-              src="/trivoralogo.png"
-              alt="Tripora24"
-              className="relative h-9 w-9 object-contain transition-transform duration-500 group-hover:rotate-[8deg] group-hover:scale-110"
-            />
-          </div>
+        <Link href="/" className="flex items-center gap-2.5 shrink-0">
+          <img src="/trivoralogo.png" alt="Tripora24" className="h-9 w-9 object-contain" />
           <span className="text-xl font-bold tracking-tight text-white">
             Tripora<span className="text-[#F08C3D]">24</span>
           </span>
@@ -101,15 +94,14 @@ export function Header() {
             </Button>
           </Link>
           <Link href="/alerts">
-            <Button variant="ghost" size="icon" className="text-white/80 hover:text-white hover:bg-white/10 relative" title={t("nav.priceAlerts")}>
-              <BellIcon className="h-4 w-4" />
-              <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-[#F08C3D] animate-pulse-soft" />
+            <Button variant="ghost" size="icon" className="text-white/80 hover:text-white hover:bg-white/10" title={t("nav.priceAlerts")}>
+              <HeartIcon className="h-4 w-4" />
             </Button>
           </Link>
           <LocaleSelector />
           <ThemeToggle />
           <Link href="/profil">
-            <Button size="sm" className="gap-2 bg-white/10 hover:bg-white text-white hover:text-[#05203c] border border-white/20 hover:border-white transition-all ml-1">
+            <Button variant="ghost" size="sm" className="text-white/80 hover:text-white hover:bg-white/10 gap-2">
               <UserIcon className="h-4 w-4" />
               <span>{t("common.login")}</span>
             </Button>
@@ -119,9 +111,8 @@ export function Header() {
         {/* Mobile right side */}
         <div className="flex md:hidden items-center gap-1">
           <Link href="/alerts">
-            <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 relative">
-              <BellIcon className="h-5 w-5" />
-              <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-[#F08C3D]" />
+            <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
+              <HeartIcon className="h-5 w-5" />
             </Button>
           </Link>
           <ThemeToggle />

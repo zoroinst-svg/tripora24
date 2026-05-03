@@ -523,41 +523,24 @@ export function SearchHero() {
 
   return (
     <PopupContext.Provider value={{ activePopup, setActivePopup }}>
-      <section className="relative overflow-hidden bg-gradient-to-br from-[#031a32] via-[#05203c] to-[#0a3d6e] py-12 md:py-20 text-white">
-        {/* Animated background layers */}
+      <section className="relative overflow-hidden bg-[#05203c] py-12 md:py-20 text-white">
+        {/* Subtle background — single soft glow, no grid, no plane */}
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute inset-0 bg-grid opacity-50" />
-          <div className="absolute -top-32 -left-20 w-96 h-96 rounded-full bg-[#F08C3D]/15 blur-3xl animate-blob" />
-          <div className="absolute top-20 -right-20 w-[28rem] h-[28rem] rounded-full bg-primary/20 blur-3xl animate-blob" style={{ animationDelay: "5s" }} />
-          <div className="absolute bottom-0 left-1/3 w-80 h-80 rounded-full bg-cyan-500/10 blur-3xl animate-blob" style={{ animationDelay: "10s" }} />
-          {/* Plane silhouette flying across */}
-          <div className="absolute top-10 hidden md:block">
-            <PlaneIcon className="h-8 w-8 text-white/15 animate-plane-fly" />
-          </div>
+          <div className="absolute -top-40 right-0 w-[40rem] h-[40rem] rounded-full bg-primary/10 blur-3xl" />
         </div>
 
         <div className="relative container mx-auto px-4">
-          {/* Live badge */}
-          <div className="mb-5 animate-fade-in-down">
-            <span className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/15 px-3 py-1.5 rounded-full text-xs font-medium text-white/90">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inset-0 rounded-full bg-emerald-400 animate-ping opacity-75" />
-                <span className="relative rounded-full h-2 w-2 bg-emerald-400" />
-              </span>
-              Live • 1.2M+ Preise heute analysiert
-            </span>
-          </div>
 
           {/* Tabs */}
-          <div className="flex gap-2 mb-6 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0 animate-fade-in-up">
+          <div className="flex gap-2 mb-6 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all cursor-pointer shrink-0 border ${
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-colors cursor-pointer shrink-0 ${
                   activeTab === tab.id
-                    ? "bg-white text-[#05203c] shadow-lg shadow-black/20 border-white scale-105"
-                    : "bg-white/5 text-white/80 hover:bg-white/15 border-white/10 hover:border-white/20"
+                    ? "bg-white text-[#05203c]"
+                    : "bg-white/10 text-white/80 hover:bg-white/15"
                 }`}
               >
                 <tab.icon className="h-4 w-4" />
@@ -567,19 +550,19 @@ export function SearchHero() {
           </div>
 
           {/* Headline */}
-          <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-3 leading-[1.05] tracking-tight animate-fade-in-up stagger-2">
+          <h1 className="text-3xl md:text-5xl font-bold mb-3 leading-[1.1] tracking-tight">
             {t("hero.headline")}
           </h1>
-          <p className="text-base md:text-lg text-blue-100/80 mb-6 max-w-2xl animate-fade-in-up stagger-3">
+          <p className="text-base md:text-lg text-blue-100/80 mb-6 max-w-2xl">
             Vergleiche in Sekunden über 500 Airlines und 2 Millionen Hotels — mit Echtzeit-Preisanalyse.
           </p>
 
           {/* Trip type */}
           {(activeTab === "flights" || activeTab === "packages") && (
-            <div className="mb-3 animate-fade-in-up stagger-4">
+            <div className="mb-3">
               <button
                 onClick={() => setTripType(tripType === "return" ? "oneway" : "return")}
-                className="flex items-center gap-2 text-sm text-white bg-white/10 hover:bg-white/20 backdrop-blur rounded-lg px-4 py-2 cursor-pointer transition-all border border-white/10"
+                className="flex items-center gap-2 text-sm text-white bg-white/10 hover:bg-white/20 rounded-lg px-4 py-2 cursor-pointer transition-colors"
               >
                 {tripType === "return" ? t("hero.roundTrip") : t("hero.oneWay")}
                 <ChevronDownIcon className="h-3 w-3" />
@@ -588,7 +571,7 @@ export function SearchHero() {
           )}
 
           {/* SEARCH BAR */}
-          <div className="bg-white dark:bg-card text-foreground rounded-2xl shadow-premium-lg ring-1 ring-black/5 animate-fade-in-up stagger-5" data-search-bar>
+          <div className="bg-white dark:bg-card text-foreground rounded-2xl shadow-2xl" data-search-bar>
             <div className="flex flex-col md:flex-row items-stretch">
               {/* Von */}
               <div className="relative flex-1 px-5 py-3 border-b md:border-b-0 md:border-r border-border min-w-0">
@@ -661,7 +644,7 @@ export function SearchHero() {
               <div className="p-2 flex items-center">
                 <Button
                   onClick={handleSearch}
-                  className="h-full rounded-xl px-8 text-base font-semibold gap-2 w-full md:w-auto min-h-[52px] bg-[#F08C3D] hover:bg-[#F08C3D]/90 text-white shadow-lg shadow-[#F08C3D]/30 hover:shadow-xl hover:shadow-[#F08C3D]/40 transition-all hover:-translate-y-0.5"
+                  className="h-full rounded-xl px-8 text-base font-semibold gap-2 w-full md:w-auto min-h-[52px]"
                   size="xl"
                 >
                   <SearchIcon className="h-5 w-5" />
@@ -671,44 +654,21 @@ export function SearchHero() {
             </div>
           </div>
 
-          {/* Trust row */}
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-5 text-xs text-blue-100/70 animate-fade-in-up stagger-6">
-            <span className="flex items-center gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-              100% kostenlos
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-              Keine versteckten Gebühren
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-              SSL-verschlüsselt
-            </span>
-          </div>
-
           {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 mt-10 md:mt-12 text-center">
+          <div className="flex flex-wrap justify-center gap-8 md:gap-12 mt-10 text-center">
             {[
               { val: "1.2M+", label: t("hero.stats.analyzed") },
               { val: "47%", label: t("hero.stats.savings") },
               { val: "500+", label: t("hero.stats.airlines") },
               { val: "24/7", label: t("hero.stats.realtime") },
-            ].map((s, i) => (
-              <div
-                key={s.val}
-                className="rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 px-3 py-4 hover:bg-white/10 transition-colors animate-fade-in-up"
-                style={{ animationDelay: `${600 + i * 80}ms` }}
-              >
-                <div className="text-xl md:text-2xl font-bold text-white">{s.val}</div>
-                <div className="text-[11px] md:text-xs text-blue-200/70 mt-0.5">{s.label}</div>
+            ].map((s) => (
+              <div key={s.val}>
+                <div className="text-xl font-bold text-white">{s.val}</div>
+                <div className="text-xs text-blue-200/70 mt-0.5">{s.label}</div>
               </div>
             ))}
           </div>
         </div>
-
-        {/* Bottom curve */}
-        <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-b from-transparent to-background/50 pointer-events-none" />
       </section>
     </PopupContext.Provider>
   )

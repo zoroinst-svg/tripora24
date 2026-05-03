@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { ChevronDownIcon, HelpIcon } from "@/components/ui/icons"
+import { ChevronDownIcon } from "@/components/ui/icons"
 import { useI18n } from "@/lib/i18n/context"
 
 // Hardcoded FAQ content per locale — more reliable than message keys for long text
@@ -64,16 +64,12 @@ export function FAQ() {
   }
 
   return (
-    <section id="faq" className="relative container mx-auto px-4 py-16 md:py-20 scroll-mt-20">
+    <section id="faq" className="container mx-auto px-4 py-14 md:py-16 scroll-mt-20">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <div className="max-w-3xl mx-auto">
-        <div className="text-center mb-10 md:mb-12 reveal">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-3 border border-primary/20">
-            <HelpIcon className="h-3.5 w-3.5" />
-            FAQ
-          </div>
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-3">{t("faq.title")}</h2>
-          <p className="text-muted-foreground text-base md:text-lg">{t("faq.subtitle")}</p>
+        <div className="mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-2">{t("faq.title")}</h2>
+          <p className="text-muted-foreground">{t("faq.subtitle")}</p>
         </div>
 
         <div className="space-y-3">
@@ -82,28 +78,23 @@ export function FAQ() {
             return (
               <div
                 key={i}
-                className={`reveal border rounded-2xl bg-card overflow-hidden transition-all duration-300 ${
-                  isOpen ? "shadow-premium border-primary/30" : "border-border hover:border-border/80"
+                className={`border rounded-xl bg-card overflow-hidden transition-colors ${
+                  isOpen ? "border-foreground/20" : "border-border"
                 }`}
-                style={{ transitionDelay: `${i * 30}ms` }}
               >
                 <button
                   onClick={() => setOpenIndex(isOpen ? null : i)}
-                  className="w-full flex items-center justify-between p-5 md:p-6 text-left cursor-pointer hover:bg-muted/40 transition-colors"
+                  className="w-full flex items-center justify-between p-5 text-left cursor-pointer hover:bg-muted/40 transition-colors"
                 >
-                  <span className="font-semibold text-base md:text-lg pr-4 leading-snug">{faq.q}</span>
-                  <span className={`shrink-0 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 ${
-                    isOpen ? "bg-primary text-primary-foreground rotate-180" : "bg-muted text-muted-foreground group-hover:bg-muted-foreground/10"
-                  }`}>
-                    <ChevronDownIcon className="h-4 w-4" />
-                  </span>
+                  <span className="font-semibold text-base pr-4 leading-snug">{faq.q}</span>
+                  <ChevronDownIcon className={`h-5 w-5 text-muted-foreground shrink-0 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
                 </button>
                 <div
-                  className="grid transition-all duration-300 ease-out"
+                  className="grid transition-all duration-200 ease-out"
                   style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}
                 >
                   <div className="overflow-hidden">
-                    <div className="px-5 md:px-6 pb-5 md:pb-6 text-sm md:text-base text-muted-foreground leading-relaxed">
+                    <div className="px-5 pb-5 text-sm text-muted-foreground leading-relaxed">
                       {faq.a}
                     </div>
                   </div>
@@ -113,8 +104,7 @@ export function FAQ() {
           })}
         </div>
 
-        {/* CTA */}
-        <div className="mt-10 text-center reveal">
+        <div className="mt-8 text-center">
           <p className="text-sm text-muted-foreground">
             Noch Fragen? <a href="mailto:contact@tripora24.com" className="text-primary font-semibold hover:underline underline-offset-2">Schreib uns</a>
           </p>

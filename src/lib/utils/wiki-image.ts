@@ -235,6 +235,22 @@ interface WikiSummary {
 // Wikipedia city articles and would otherwise be served as the hero.
 const BAD_IMAGE_RE = /(Flag_of_|Coat_of_arms_|_COA[._]|_Wappen[._]|Wappen_|Stadtwappen|Karte_|Map_of_|Locator_map|Location_map|Karte_Gemeinde_|_locator|_flag\.|\.svg\.png$|langde-|\/[A-Z]{2,3}\.png$|\/[A-Z]{2,3}\.svg)/i
 
+// Convert any Wikimedia image URL to a Special:FilePath URL with explicit width.
+// Critical: Wikipedia REST often returns the original full-size image (10+ MB).
+// Wikimedia's upload CDN only serves thumbnail sizes that already exist for a
+// given file — requesting an arbitrary "/1024px-" URL returns HTTP 400.
+// Special:FilePath?width=N routes through MediaWiki's thumbnail pipeline,
+// which generates any size on demand and 301-redirects to the right bucket.
+function toThumb(url: string, width = 1024): string {
+  // Match: upload.wikimedia.org/wikipedia/{site}/A/AB/filename.ext      (original)
+  //   or   upload.wikimedia.org/wikipedia/{site}/thumb/A/AB/filename.ext/Npx-...  (thumbnail)
+  const m = url.match(/^https:\/\/upload\.wikimedia\.org\/wikipedia\/([^/]+)(?:\/thumb)?\/[0-9a-f]\/[0-9a-f]{2}\/([^/?#]+)/i)
+  if (!m) return url
+  const [, site, filename] = m
+  const host = site === "commons" ? "commons.wikimedia.org" : `${site}.wikipedia.org`
+  return `https://${host}/wiki/Special:FilePath/${filename}?width=${width}`
+}
+
 async function fetchWikiThumb(title: string, lang: "en" | "de"): Promise<string | null> {
   try {
     const res = await fetch(
@@ -247,11 +263,11 @@ async function fetchWikiThumb(title: string, lang: "en" | "de"): Promise<string 
     if (!res.ok) return null
     const data: WikiSummary = await res.json()
     if (data.type === "disambiguation") return null
-    const src = data.originalimage?.source || data.thumbnail?.source
+    // Prefer thumbnail (always sized) over originalimage (full-size, can be 10+ MB)
+    const src = data.thumbnail?.source || data.originalimage?.source
     if (!src) return null
     if (BAD_IMAGE_RE.test(src)) return null
-    // If we got the thumbnail (small), upgrade the URL to 1024px width
-    return src.replace(/\/\d+px-/, "/1024px-")
+    return toThumb(src, 1024)
   } catch {
     return null
   }
