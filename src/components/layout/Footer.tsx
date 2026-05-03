@@ -4,6 +4,7 @@ import Link from "next/link"
 import { useState } from "react"
 import { useI18n } from "@/lib/i18n/context"
 import { MailIcon, CheckIcon, ShieldIcon, SparklesIcon, GlobeIcon, BellIcon } from "@/components/ui/icons"
+import { buildCompensairUrl, buildEktaUrl } from "@/lib/apis/partners"
 
 export function Footer() {
   const { t } = useI18n()
@@ -119,6 +120,8 @@ export function Footer() {
               {[
                 { href: "/fluege", label: t("nav.flights") },
                 { href: "/hotels", label: t("nav.hotels") },
+                { href: "/mietwagen", label: t("nav.carRental") },
+                { href: "/aktivitaeten", label: "Aktivitäten" },
                 { href: "/pauschalreisen", label: t("nav.packages") },
                 { href: "/deals", label: t("nav.deals") },
               ].map((link) => (
@@ -159,6 +162,22 @@ export function Footer() {
             <div className="flex flex-col gap-2.5 text-sm text-muted-foreground">
               <Link href="/blog" className="hover:text-foreground hover:translate-x-0.5 transition-all w-fit">{t("common.blog")}</Link>
               <Link href="/alerts" className="hover:text-foreground hover:translate-x-0.5 transition-all w-fit">{t("nav.priceAlerts")}</Link>
+              <a
+                href={buildCompensairUrl()}
+                target="_blank"
+                rel="noopener sponsored nofollow"
+                className="hover:text-foreground hover:translate-x-0.5 transition-all w-fit"
+              >
+                Flug-Entschädigung
+              </a>
+              <a
+                href={buildEktaUrl()}
+                target="_blank"
+                rel="noopener sponsored nofollow"
+                className="hover:text-foreground hover:translate-x-0.5 transition-all w-fit"
+              >
+                Reiseversicherung
+              </a>
               <Link href="/impressum" className="hover:text-foreground hover:translate-x-0.5 transition-all w-fit">{t("footer.imprint")}</Link>
               <Link href="/datenschutz" className="hover:text-foreground hover:translate-x-0.5 transition-all w-fit">{t("footer.privacy")}</Link>
               <a href="mailto:contact@tripora24.com" className="hover:text-foreground hover:translate-x-0.5 transition-all w-fit">{t("footer.contact")}</a>

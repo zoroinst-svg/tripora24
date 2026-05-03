@@ -16,25 +16,25 @@ export function QuickActions() {
       hint: "2M+ Hotels",
     },
     {
-      href: "/fluege?from=DE",
+      href: "/mietwagen",
       label: t("quickActions.carRental"),
       icon: CarIcon,
       gradient: "from-purple-500 to-pink-600",
-      hint: "Mietwagen weltweit",
+      hint: "900+ Anbieter",
+    },
+    {
+      href: "/aktivitaeten",
+      label: t("quickActions.activities"),
+      icon: GlobeIcon,
+      gradient: "from-emerald-500 to-teal-600",
+      hint: "Touren & Tickets",
     },
     {
       href: "/pauschalreisen",
       label: t("quickActions.packages"),
       icon: PackageIcon,
-      gradient: "from-emerald-500 to-teal-600",
-      hint: "Flug + Hotel",
-    },
-    {
-      href: "/fluege?from=DE&to=EVERYWHERE",
-      label: t("quickActions.explore"),
-      icon: GlobeIcon,
       gradient: "from-orange-500 to-rose-600",
-      hint: "Inspiration finden",
+      hint: "Flug + Hotel",
     },
   ]
 

@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import { usePathname } from "next/navigation"
-import { HelpIcon, HeartIcon, UserIcon, MenuIcon, CloseIcon, BookOpenIcon, PlaneIcon, HotelIcon, PackageIcon, BellIcon } from "@/components/ui/icons"
+import { HelpIcon, HeartIcon, UserIcon, MenuIcon, CloseIcon, BookOpenIcon, PlaneIcon, HotelIcon, PackageIcon, BellIcon, CarIcon, GlobeIcon } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "./ThemeToggle"
 import { LocaleSelector } from "./LocaleSelector"
@@ -152,6 +152,8 @@ export function Header() {
           {[
             { href: "/fluege", label: t("nav.flights"), icon: PlaneIcon },
             { href: "/hotels", label: t("nav.hotels"), icon: HotelIcon },
+            { href: "/mietwagen", label: t("nav.carRental"), icon: CarIcon },
+            { href: "/aktivitaeten", label: "Aktivitäten", icon: GlobeIcon },
             { href: "/pauschalreisen", label: t("nav.packages"), icon: PackageIcon },
             { href: "/deals", label: t("nav.deals"), icon: HeartIcon },
             { href: "/blog", label: t("common.blog"), icon: BookOpenIcon },

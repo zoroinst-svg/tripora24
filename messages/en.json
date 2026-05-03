@@ -88,7 +88,9 @@
     "packages": "Holiday packages",
     "packagesSub": "Flight + hotel combined",
     "explore": "Explore everywhere",
-    "exploreSub": "Wherever you want"
+    "exploreSub": "Wherever you want",
+    "activities": "Activities",
+    "activitiesSub": "Tours & tickets"
   },
   "promo": {
     "badge": "New at Tripora24",

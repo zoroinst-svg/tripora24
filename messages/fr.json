@@ -88,7 +88,9 @@
     "packages": "Séjours tout compris",
     "packagesSub": "Vol + hôtel combiné",
     "explore": "Explorer partout",
-    "exploreSub": "Où vous voulez"
+    "exploreSub": "Où vous voulez",
+    "activities": "Activités",
+    "activitiesSub": "Visites & billets"
   },
   "promo": {
     "badge": "Nouveau chez Tripora24",

@@ -7,8 +7,9 @@ import { TOP_ROUTES, parseRouteSlug, routeSlug } from "@/lib/data/top-routes"
 import { getRouteStats, monthLabel, formatDuration } from "@/lib/apis/route-stats"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { PlaneIcon, ArrowRightIcon, ClockIcon, CalendarIcon } from "@/components/ui/icons"
+import { PlaneIcon, ArrowRightIcon, ClockIcon, CalendarIcon, GlobeIcon, CarIcon, ShieldIcon } from "@/components/ui/icons"
 import { BreadcrumbJsonLd, FlightRouteJsonLd } from "@/components/seo/JsonLd"
+import { buildGetYourGuideUrl, buildKiwiTaxiUrl, buildDiscoverCarsUrl, buildCompensairUrl } from "@/lib/apis/partners"
 
 export const dynamicParams = false
 export const revalidate = 86400
@@ -243,6 +244,81 @@ export default async function RoutePage({ params }: { params: Promise<{ route: s
               <Button variant="outline" size="lg">{p.name} öffnen</Button>
             </a>
           ))}
+        </div>
+      </Card>
+
+      {/* Komplettiere deine Reise — Partner-Services */}
+      <section className="mb-10">
+        <h2 className="text-xl font-bold mb-2">Komplettiere deine Reise nach {toCity}</h2>
+        <p className="text-sm text-muted-foreground mb-4">
+          Mietwagen, Transfers und Aktivitäten — alles was du nach der Landung brauchst.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <a
+            href={buildGetYourGuideUrl({ destination: toCity })}
+            target="_blank"
+            rel="noopener sponsored nofollow"
+            className="group"
+          >
+            <Card className="p-5 h-full hover:shadow-lg hover:-translate-y-0.5 transition-all">
+              <div className="w-10 h-10 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center mb-3">
+                <GlobeIcon className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+              </div>
+              <h3 className="font-bold text-base mb-1">Touren & Tickets in {toCity}</h3>
+              <p className="text-xs text-muted-foreground mb-3">Skip-the-line Tickets, Stadtführungen und Erlebnisse — sofort buchen.</p>
+              <span className="text-xs text-primary font-semibold group-hover:underline">Aktivitäten ansehen →</span>
+            </Card>
+          </a>
+          <a
+            href={buildKiwiTaxiUrl({ destination: `${to} airport ${toCity}` })}
+            target="_blank"
+            rel="noopener sponsored nofollow"
+            className="group"
+          >
+            <Card className="p-5 h-full hover:shadow-lg hover:-translate-y-0.5 transition-all">
+              <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center mb-3">
+                <CarIcon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              </div>
+              <h3 className="font-bold text-base mb-1">Flughafentransfer {toCity}</h3>
+              <p className="text-xs text-muted-foreground mb-3">Privat-Transfer von {to} zum Hotel — Festpreis, deutscher Fahrer möglich.</p>
+              <span className="text-xs text-primary font-semibold group-hover:underline">Transfer buchen →</span>
+            </Card>
+          </a>
+          <a
+            href={buildDiscoverCarsUrl({ pickupLocation: `${toCity} ${to}` })}
+            target="_blank"
+            rel="noopener sponsored nofollow"
+            className="group"
+          >
+            <Card className="p-5 h-full hover:shadow-lg hover:-translate-y-0.5 transition-all">
+              <div className="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/40 flex items-center justify-center mb-3">
+                <CarIcon className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+              </div>
+              <h3 className="font-bold text-base mb-1">Mietwagen ab {toCity} {to}</h3>
+              <p className="text-xs text-muted-foreground mb-3">900+ Anbieter vergleichen — Vollkasko inkl., kostenlose Stornierung.</p>
+              <span className="text-xs text-primary font-semibold group-hover:underline">Mietwagen vergleichen →</span>
+            </Card>
+          </a>
+        </div>
+      </section>
+
+      {/* Compensair Banner — Flugverspätung/Annullierung */}
+      <Card className="p-5 mb-10 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 border-amber-200 dark:border-amber-900/50">
+        <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
+          <div className="w-12 h-12 rounded-lg bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center shrink-0">
+            <ShieldIcon className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+          </div>
+          <div className="flex-1">
+            <h3 className="font-bold text-base mb-1">Flug verspätet oder annulliert?</h3>
+            <p className="text-sm text-muted-foreground">
+              Nach EU-Verordnung 261/2004 stehen dir bis zu <strong>600€ Entschädigung</strong> zu — auch rückwirkend für Flüge der letzten 3 Jahre.
+            </p>
+          </div>
+          <a href={buildCompensairUrl()} target="_blank" rel="noopener sponsored nofollow">
+            <Button variant="outline" className="gap-2 bg-white dark:bg-slate-900">
+              Anspruch prüfen <ArrowRightIcon className="h-4 w-4" />
+            </Button>
+          </a>
         </div>
       </Card>
 

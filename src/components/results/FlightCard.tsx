@@ -7,6 +7,7 @@ import { Separator } from "@/components/ui/separator"
 import { PlaneIcon, ClockIcon, ExternalLinkIcon } from "@/components/ui/icons"
 import { formatPrice, formatDuration } from "@/lib/utils"
 import { calculateDealScore } from "@/lib/deal-engine/score"
+import { buildKiwiUrl } from "@/lib/apis/partners"
 import type { FlightOffer } from "@/lib/deal-engine/mock-data"
 
 export function FlightCard({ flight }: { flight: FlightOffer }) {
@@ -14,6 +15,12 @@ export function FlightCard({ flight }: { flight: FlightOffer }) {
   const badgeVariant = dealScore.score >= 50 ? "mega" : dealScore.score >= 25 ? "great" : dealScore.score >= 10 ? "good" : "normal"
   const savings = flight.avgPrice - flight.price
   const savingsPct = Math.round((savings / flight.avgPrice) * 100)
+  const kiwiUrl = buildKiwiUrl({
+    origin: flight.origin,
+    destination: flight.destination,
+    departureDate: flight.departureDate,
+    returnDate: flight.returnDate,
+  })
 
   return (
     <Card className="p-4 md:p-6 hover:shadow-premium-lg hover:-translate-y-0.5 hover:border-primary/40 transition-all duration-300 overflow-hidden relative group">
@@ -120,11 +127,19 @@ export function FlightCard({ flight }: { flight: FlightOffer }) {
             <div className="text-2xl font-extrabold text-primary leading-none mt-0.5">{formatPrice(flight.price)}</div>
             <div className="text-xs text-muted-foreground mt-0.5">pro Person</div>
           </div>
-          <a href={flight.bookingUrl} target="_blank" rel="noopener noreferrer" className="w-full md:w-auto">
+          <a href={flight.bookingUrl} target="_blank" rel="noopener sponsored nofollow" className="w-full md:w-auto">
             <Button className="gap-2 w-full md:w-auto group/btn shadow-sm" size="sm">
               Buchen
               <ExternalLinkIcon className="h-3 w-3 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
             </Button>
+          </a>
+          <a
+            href={kiwiUrl}
+            target="_blank"
+            rel="noopener sponsored nofollow"
+            className="text-[11px] text-muted-foreground hover:text-primary underline-offset-2 hover:underline transition-colors"
+          >
+            Auch bei Kiwi.com prüfen →
           </a>
         </div>
       </div>

@@ -88,7 +88,9 @@
     "packages": "Pauschalreisen",
     "packagesSub": "Flug + Hotel kombiniert",
     "explore": "Alle Orte erkunden",
-    "exploreSub": "Wohin auch immer"
+    "exploreSub": "Wohin auch immer",
+    "activities": "Aktivitäten",
+    "activitiesSub": "Touren & Tickets"
   },
   "promo": {
     "badge": "Neu bei Tripora24",

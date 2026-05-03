@@ -11,6 +11,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: baseUrl, lastModified: now, changeFrequency: "daily", priority: 1 },
     { url: `${baseUrl}/fluege`, lastModified: now, changeFrequency: "daily", priority: 0.9 },
     { url: `${baseUrl}/hotels`, lastModified: now, changeFrequency: "daily", priority: 0.9 },
+    { url: `${baseUrl}/mietwagen`, lastModified: now, changeFrequency: "weekly", priority: 0.85 },
+    { url: `${baseUrl}/aktivitaeten`, lastModified: now, changeFrequency: "weekly", priority: 0.85 },
     { url: `${baseUrl}/pauschalreisen`, lastModified: now, changeFrequency: "daily", priority: 0.9 },
     { url: `${baseUrl}/deals`, lastModified: now, changeFrequency: "hourly", priority: 0.8 },
     { url: `${baseUrl}/alerts`, lastModified: now, changeFrequency: "weekly", priority: 0.6 },
