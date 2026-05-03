@@ -6,10 +6,14 @@
 // Program IDs (p=) come from Travelpayouts docs. If a click lands on the partner
 // without tracking, verify the program ID in your TP dashboard → "Tools → Links".
 
-// Travelpayouts marker — used everywhere as 717690 (our affiliate ID).
-// NEVER fall back to a non-numeric string: tp.media/r rejects `trs=direct`
-// with a schema error and blocks the redirect.
+// Travelpayouts marker — your affiliate ID (numeric).
 const MARKER = process.env.TRAVELPAYOUTS_MARKER || "717690"
+
+// Travelpayouts traffic source — optional sub-ID *within* your account, used
+// when you've configured multiple traffic sources in the TP dashboard. If it
+// isn't an ID you actually own, tp.media rejects the click with
+// "traffic_source is not valid". Leave empty unless you've set one up there.
+const TRS = process.env.TRAVELPAYOUTS_TRS || ""
 
 // Travelpayouts program IDs — verify in TP dashboard if tracking breaks
 const PROGRAM_IDS = {
@@ -29,7 +33,8 @@ const PROGRAM_IDS = {
  */
 function tpRedirect(programId: number, targetUrl: string): string {
   const u = encodeURIComponent(targetUrl)
-  return `https://tp.media/r?marker=${MARKER}&trs=${MARKER}&p=${programId}&u=${u}&campaign_id=${programId}`
+  const trs = TRS ? `&trs=${TRS}` : ""
+  return `https://tp.media/r?marker=${MARKER}${trs}&p=${programId}&u=${u}&campaign_id=${programId}`
 }
 
 // ──────────────────────────────────────────────────────────
