@@ -1,21 +1,16 @@
-// Resolves a unique hero image per city / country using the Wikipedia REST API.
-// English Wikipedia is preferred — its city/country articles consistently use a
-// real cityscape / landmark photo as the lead image, whereas German Wikipedia
-// often uses a coat of arms or city flag. Server-side fetch is cached for 30 days.
+// Resolves a hero image per city / country.
+//
+// Pipeline (in order):
+// 1. Curated map (curated-images.ts) — hand-picked Unsplash photo for ~150 top
+//    destinations. Always correct, no network call.
+// 2. Wikipedia REST API — for codes not in the curated map. English first,
+//    German fallback. Filters out flags, coats of arms, maps.
+// 3. Category-pool fallback — picks one of several stock photos based on the
+//    destination category (beach/city/island/mountain/cultural). Hash-indexed
+//    so the same code always gets the same image.
 
 import { getCity, getCountryName, getCategory } from "@/lib/data/iata-database"
-
-const U = (id: string) => `https://images.unsplash.com/${id}?w=800&h=600&fit=crop`
-
-// Category fallbacks — only used when Wikipedia has no usable image
-const FALLBACK: Record<string, string> = {
-  beach:    U("photo-1507525428034-b723cf961d3e"),
-  city:     U("photo-1477959858617-67f85cf4f1df"),
-  island:   U("photo-1559128010-7c1ad6e1b6a5"),
-  mountain: U("photo-1464822759023-fed622ff2c3b"),
-  cultural: U("photo-1549144511-f099e773c147"),
-  default:  U("photo-1488646953014-85cb44e25828"),
-}
+import { CURATED_CITY, CURATED_COUNTRY, pickCategoryImage } from "./curated-images"
 
 // English Wikipedia title per IATA code. English titles are mapped explicitly
 // because the IATA database stores German names which often don't match
@@ -307,23 +302,38 @@ function expandTitles(value: string | string[] | undefined): string[] {
 
 export async function resolveCityImage(code: string): Promise<string> {
   const upper = code.toUpperCase()
+
+  // 1. Curated map — guaranteed correct, no network
+  if (CURATED_CITY[upper]) return CURATED_CITY[upper]
+
+  // 2. Wikipedia
   const candidates: string[] = [...expandTitles(CITY_TITLE_EN[upper])]
-  // Also try the German name from IATA_DB as a last resort
   const germanName = getCity(upper)
   if (germanName && germanName !== upper) candidates.push(...buildCandidateTitles(germanName))
-  if (candidates.length === 0) return FALLBACK[getCategory(upper)] || FALLBACK.default
-  const url = await tryTitles(candidates)
-  if (url) return url
-  return FALLBACK[getCategory(upper)] || FALLBACK.default
+  if (candidates.length > 0) {
+    const url = await tryTitles(candidates)
+    if (url) return url
+  }
+
+  // 3. Category-pool fallback (deterministic per code)
+  return pickCategoryImage(upper, getCategory(upper))
 }
 
 export async function resolveCountryImage(code: string): Promise<string> {
   const upper = code.toUpperCase()
+
+  // 1. Curated map
+  if (CURATED_COUNTRY[upper]) return CURATED_COUNTRY[upper]
+
+  // 2. Wikipedia
   const candidates: string[] = [...expandTitles(COUNTRY_TITLE_EN[upper])]
   const countryName = getCountryName(upper)
   if (countryName && countryName !== upper) candidates.push(...buildCandidateTitles(countryName))
-  if (candidates.length === 0) return FALLBACK.default
-  const url = await tryTitles(candidates)
-  if (url) return url
-  return FALLBACK.default
+  if (candidates.length > 0) {
+    const url = await tryTitles(candidates)
+    if (url) return url
+  }
+
+  // 3. Default fallback (deterministic)
+  return pickCategoryImage(upper, "default")
 }
