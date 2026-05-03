@@ -4,7 +4,7 @@ import Link from "next/link"
 import { useState } from "react"
 import { useI18n } from "@/lib/i18n/context"
 import { MailIcon, CheckIcon } from "@/components/ui/icons"
-import { buildCompensairUrl, buildEktaUrl } from "@/lib/apis/partners"
+import { buildAirHelpUrl, buildEktaUrl } from "@/lib/apis/partners"
 
 export function Footer() {
   const { t } = useI18n()
@@ -99,7 +99,7 @@ export function Footer() {
             <div className="flex flex-col gap-2 text-sm text-muted-foreground">
               <Link href="/blog" className="hover:text-foreground transition-colors">{t("common.blog")}</Link>
               <Link href="/alerts" className="hover:text-foreground transition-colors">{t("nav.priceAlerts")}</Link>
-              <a href={buildCompensairUrl()} target="_blank" rel="noopener sponsored nofollow" className="hover:text-foreground transition-colors">Flug-Entschädigung</a>
+              <a href={buildAirHelpUrl()} target="_blank" rel="noopener sponsored nofollow" className="hover:text-foreground transition-colors">Flug-Entschädigung</a>
               <a href={buildEktaUrl()} target="_blank" rel="noopener sponsored nofollow" className="hover:text-foreground transition-colors">Reiseversicherung</a>
               <Link href="/impressum" className="hover:text-foreground transition-colors">{t("footer.imprint")}</Link>
               <Link href="/datenschutz" className="hover:text-foreground transition-colors">{t("footer.privacy")}</Link>

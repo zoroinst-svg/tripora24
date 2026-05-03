@@ -24,12 +24,21 @@ const MARKER = process.env.TRAVELPAYOUTS_MARKER || "717690"
 // using the same hash get aggregated together.
 // ──────────────────────────────────────────────────────────
 const DEEPLINK = {
-  kiwi:       "faf8de2cbfbf4cc29ae564a01",
-  localrent:  "31ceefa35e2a43bf9528f5566",
-  kiwitaxi:   "0fc136a4b28e4627bb1d25efa",
-  compensair: "e49d3cfc2ddd441e81764d880",
-  airhelp:    "a63969cd0fb1409092df96b74",
-  aviasales:  "Zz181bb994594244d5a809b39",
+  kiwi:           "faf8de2cbfbf4cc29ae564a01",
+  localrent:      "31ceefa35e2a43bf9528f5566",
+  kiwitaxi:       "0fc136a4b28e4627bb1d25efa",
+  compensair:     "e49d3cfc2ddd441e81764d880",
+  airhelp:        "a63969cd0fb1409092df96b74",
+  aviasales:      "Zz181bb994594244d5a809b39",
+  wegotrip:       "ea1b986792b044eeb96138573",
+  tiqets:         "62f7df36e0d846628dcb12344",
+  autoEurope:     "9a201a07ac674",
+  getRentacar:    "aad8aadaa0094ffcbae0359ee",
+  getTransfer:    "bed3f89a5a724210bcc270697",
+  welcomePickups: "9ebc1dcfc29a42a8b0ac93514",
+  ekta:           "e6986554389b40baa01380d43",
+  // Airalo routes through Impact (airalo.pxf.io) — see buildAiraloUrl below
+  airalo:         "7c960ee79fa544c19e64e0995",
 } as const
 
 const sub = (k: keyof typeof DEEPLINK) => `${DEEPLINK[k]}-${MARKER}`
@@ -179,39 +188,96 @@ export function buildGetYourGuideUrl(params?: { destination?: string; query?: st
 
 // ──────────────────────────────────────────────────────────
 // EKTA — travel insurance
-// (No shortlink shared yet → simple direct URL, no tracking until shortlink
-// is provided. The Marker still gets credited for any TP-tracked program
-// the user is in if they navigate from a tracked page, but for now this is
-// a plain link.)
+// Scheme: ?sub_id=<sub>&utm_source=travelpayouts
 // ──────────────────────────────────────────────────────────
 export function buildEktaUrl(): string {
-  // TODO: replace with real EKTA tracking once shortlink is provided
-  return "https://ektatraveling.com/"
+  return withParams("https://ektatraveling.com/", {
+    sub_id: sub("ekta"),
+    utm_source: "travelpayouts",
+  })
 }
 
 // ──────────────────────────────────────────────────────────
-// Stubs for partners not yet wired (function exists so callers don't break)
+// GETTRANSFER — airport transfers (alternative to Kiwitaxi)
+// Scheme: ?sub_id=<sub>&utm_campaign=travelpayouts&utm_medium=cpa&utm_source=travelpayouts
 // ──────────────────────────────────────────────────────────
 export function buildGetTransferUrl(_params?: { destination?: string }): string {
-  return "https://gettransfer.com/"
+  return withParams("https://gettransfer.com/de", {
+    sub_id: sub("getTransfer"),
+    utm_campaign: "travelpayouts",
+    utm_medium: "cpa",
+    utm_source: "travelpayouts",
+  })
 }
+
+// ──────────────────────────────────────────────────────────
+// WELCOME PICKUPS — airport transfers
+// Scheme: ?aff_track_id=<sub>&utm_source=travelpayouts
+// ──────────────────────────────────────────────────────────
 export function buildWelcomePickupsUrl(): string {
-  return "https://www.welcomepickups.com/"
+  return withParams("https://www.welcomepickups.com/", {
+    aff_track_id: sub("welcomePickups"),
+    utm_source: "travelpayouts",
+  })
 }
+
+// ──────────────────────────────────────────────────────────
+// GETRENTACAR — car rental
+// Scheme: ?track_id=<sub>&utm_campaign=partner&utm_medium=partner_cpa&utm_source=travelpayouts
+// ──────────────────────────────────────────────────────────
 export function buildGetRentacarUrl(): string {
-  return "https://getrentacar.com/"
+  return withParams("https://getrentacar.com/", {
+    track_id: sub("getRentacar"),
+    utm_campaign: "partner",
+    utm_medium: "partner_cpa",
+    utm_source: "travelpayouts",
+  })
 }
+
+// ──────────────────────────────────────────────────────────
+// AUTOEUROPE — car rental (EU/UK)
+// Scheme: ?aff=travelpayoutseu&sub_id=<sub>
+// Note: AutoEurope uses .eu domain, not .com
+// ──────────────────────────────────────────────────────────
 export function buildAutoEuropeUrl(): string {
-  return "https://www.autoeurope.com/"
+  return withParams("https://www.autoeurope.eu/", {
+    aff: "travelpayoutseu",
+    sub_id: sub("autoEurope"),
+  })
 }
+
+// ──────────────────────────────────────────────────────────
+// TIQETS — attraction & museum tickets
+// Scheme: ?partner=travelpayouts.com&tq_campaign=<sub>&tq_click_id=<sub>
+// ──────────────────────────────────────────────────────────
 export function buildTiqetsUrl(_params?: { destination?: string }): string {
-  return "https://www.tiqets.com/"
+  return withParams("https://www.tiqets.com/de/", {
+    partner: "travelpayouts.com",
+    tq_campaign: sub("tiqets"),
+    tq_click_id: sub("tiqets"),
+  })
 }
+
+// ──────────────────────────────────────────────────────────
+// WEGOTRIP — guided tours
+// Scheme: ?sub_id=<sub>&utm_source=travelpayouts
+// ──────────────────────────────────────────────────────────
 export function buildWeGoTripUrl(): string {
-  return "https://wegotrip.com/"
+  return withParams("https://wegotrip.com/", {
+    sub_id: sub("wegotrip"),
+    utm_source: "travelpayouts",
+  })
 }
-export function buildAiraloUrl(): string {
-  return "https://www.airalo.com/"
+
+// ──────────────────────────────────────────────────────────
+// AIRALO — eSIM
+// Routes through Impact (airalo.pxf.io). The Impact entry URL itself works
+// as our affiliate link — Impact generates irclickid downstream and tracks
+// back to TP. We can change `u=` to deep-link to a specific Airalo page.
+// ──────────────────────────────────────────────────────────
+export function buildAiraloUrl(targetUrl?: string): string {
+  const target = targetUrl || "https://airalo.com"
+  return `https://airalo.pxf.io/c/1209822/1310283/15608?sharedID=${MARKER}_&subId1=${sub("airalo")}&u=${encodeURIComponent(target)}`
 }
 
 export function isPartnersConfigured(): boolean {

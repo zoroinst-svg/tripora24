@@ -14,7 +14,7 @@ import {
   buildKiwiTaxiUrl,
   buildDiscoverCarsUrl,
   buildGetYourGuideUrl,
-  buildCompensairUrl,
+  buildAirHelpUrl,
   buildEktaUrl,
 } from "@/lib/apis/partners"
 import Link from "next/link"
@@ -343,9 +343,9 @@ function FlightDetailContent() {
           </a>
         </div>
 
-        {/* Compensair — separate, only if relevant */}
+        {/* AirHelp — flight comp, only if relevant */}
         <a
-          href={buildCompensairUrl()}
+          href={buildAirHelpUrl()}
           target="_blank"
           rel="noopener sponsored nofollow"
           className="group mt-3 flex items-center gap-3 rounded-xl border bg-muted/30 p-4 hover:bg-muted/50 transition-colors"
@@ -355,7 +355,7 @@ function FlightDetailContent() {
           </div>
           <div className="min-w-0 flex-1">
             <div className="font-semibold text-sm">Flug verspätet oder gestrichen?</div>
-            <div className="text-xs text-muted-foreground">Bis zu 600€ Entschädigung — Compensair prüft kostenlos</div>
+            <div className="text-xs text-muted-foreground">Bis zu 600€ Entschädigung — AirHelp prüft kostenlos</div>
           </div>
           <ExternalLinkIcon className="h-3.5 w-3.5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
         </a>

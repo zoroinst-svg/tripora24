@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { PlaneIcon, ArrowRightIcon, ClockIcon, CalendarIcon, GlobeIcon, CarIcon, ShieldIcon } from "@/components/ui/icons"
 import { BreadcrumbJsonLd, FlightRouteJsonLd } from "@/components/seo/JsonLd"
-import { buildGetYourGuideUrl, buildKiwiTaxiUrl, buildDiscoverCarsUrl, buildCompensairUrl } from "@/lib/apis/partners"
+import { buildGetYourGuideUrl, buildKiwiTaxiUrl, buildDiscoverCarsUrl, buildAirHelpUrl } from "@/lib/apis/partners"
 
 export const dynamicParams = false
 export const revalidate = 86400
@@ -302,7 +302,7 @@ export default async function RoutePage({ params }: { params: Promise<{ route: s
         </div>
       </section>
 
-      {/* Compensair Banner — Flugverspätung/Annullierung */}
+      {/* AirHelp Banner — Flugverspätung/Annullierung */}
       <Card className="p-5 mb-10 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 border-amber-200 dark:border-amber-900/50">
         <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
           <div className="w-12 h-12 rounded-lg bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center shrink-0">
@@ -311,10 +311,10 @@ export default async function RoutePage({ params }: { params: Promise<{ route: s
           <div className="flex-1">
             <h3 className="font-bold text-base mb-1">Flug verspätet oder annulliert?</h3>
             <p className="text-sm text-muted-foreground">
-              Nach EU-Verordnung 261/2004 stehen dir bis zu <strong>600€ Entschädigung</strong> zu — auch rückwirkend für Flüge der letzten 3 Jahre.
+              Nach EU-Verordnung 261/2004 stehen dir bis zu <strong>600€ Entschädigung</strong> zu — AirHelp prüft kostenlos, auch rückwirkend für Flüge der letzten 3 Jahre.
             </p>
           </div>
-          <a href={buildCompensairUrl()} target="_blank" rel="noopener sponsored nofollow">
+          <a href={buildAirHelpUrl()} target="_blank" rel="noopener sponsored nofollow">
             <Button variant="outline" className="gap-2 bg-white dark:bg-slate-900">
               Anspruch prüfen <ArrowRightIcon className="h-4 w-4" />
             </Button>
