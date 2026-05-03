@@ -15,6 +15,20 @@ const MARKER = process.env.TRAVELPAYOUTS_MARKER || "717690"
 // "traffic_source is not valid". Leave empty unless you've set one up there.
 const TRS = process.env.TRAVELPAYOUTS_TRS || ""
 
+// Programs that haven't been approved yet for this marker. tp.media rejects
+// clicks for unsubscribed programs with "marker is not subscribed to campaign",
+// so for these we fall back to direct URLs (no commission, but the link works).
+//
+// Set in Vercel env: TRAVELPAYOUTS_DISABLED_PROGRAMS=4471,4519,4480 etc.
+// Remove a program ID from the list once it's approved in the TP dashboard.
+const DISABLED_PROGRAMS = new Set(
+  (process.env.TRAVELPAYOUTS_DISABLED_PROGRAMS || "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .map(Number),
+)
+
 // Travelpayouts program IDs — verify in TP dashboard if tracking breaks
 const PROGRAM_IDS = {
   kiwi: 4471,
@@ -29,9 +43,12 @@ const PROGRAM_IDS = {
 
 /**
  * Build a Travelpayouts redirect URL — universal affiliate wrapper.
- * The user clicks → tp.media tracks → lands on the partner with attribution.
+ * If the program isn't approved yet (listed in DISABLED_PROGRAMS), returns the
+ * raw target URL instead so users still reach the partner without a broken
+ * tp.media error page.
  */
 function tpRedirect(programId: number, targetUrl: string): string {
+  if (DISABLED_PROGRAMS.has(programId)) return targetUrl
   const u = encodeURIComponent(targetUrl)
   const trs = TRS ? `&trs=${TRS}` : ""
   return `https://tp.media/r?marker=${MARKER}${trs}&p=${programId}&u=${u}&campaign_id=${programId}`
