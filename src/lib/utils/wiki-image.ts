@@ -219,26 +219,16 @@ const COUNTRY_TITLE_EN: Record<string, string | string[]> = {
   UA: "Kyiv", BY: "Minsk", MD: "Chișinău", RU: "Moscow",
 }
 
-interface WikiSummary {
-  type?: string
-  originalimage?: { source: string; width?: number; height?: number }
-  thumbnail?: { source: string }
-}
-
 // Detects flags, coats of arms, maps, country-code icons, and other
-// non-photographic lead images. These appear frequently on German
-// Wikipedia city articles and would otherwise be served as the hero.
+// non-photographic lead images.
 const BAD_IMAGE_RE = /(Flag_of_|Coat_of_arms_|_COA[._]|_Wappen[._]|Wappen_|Stadtwappen|Karte_|Map_of_|Locator_map|Location_map|Karte_Gemeinde_|_locator|_flag\.|\.svg\.png$|langde-|\/[A-Z]{2,3}\.png$|\/[A-Z]{2,3}\.svg)/i
 
-// Convert any Wikimedia image URL to a Special:FilePath URL with explicit width.
-// Critical: Wikipedia REST often returns the original full-size image (10+ MB).
+// Convert a Wikimedia URL to a Special:FilePath thumbnail URL.
 // Wikimedia's upload CDN only serves thumbnail sizes that already exist for a
 // given file — requesting an arbitrary "/1024px-" URL returns HTTP 400.
 // Special:FilePath?width=N routes through MediaWiki's thumbnail pipeline,
 // which generates any size on demand and 301-redirects to the right bucket.
 function toThumb(url: string, width = 1024): string {
-  // Match: upload.wikimedia.org/wikipedia/{site}/A/AB/filename.ext      (original)
-  //   or   upload.wikimedia.org/wikipedia/{site}/thumb/A/AB/filename.ext/Npx-...  (thumbnail)
   const m = url.match(/^https:\/\/upload\.wikimedia\.org\/wikipedia\/([^/]+)(?:\/thumb)?\/[0-9a-f]\/[0-9a-f]{2}\/([^/?#]+)/i)
   if (!m) return url
   const [, site, filename] = m
@@ -246,33 +236,50 @@ function toThumb(url: string, width = 1024): string {
   return `https://${host}/wiki/Special:FilePath/${filename}?width=${width}`
 }
 
-async function fetchWikiThumb(title: string, lang: "en" | "de"): Promise<string | null> {
+interface PageImagesResponse {
+  query?: {
+    pages?: Record<string, {
+      pageid?: number
+      missing?: string
+      original?: { source: string }
+      thumbnail?: { source: string }
+    }>
+  }
+}
+
+// Use Wikipedia's `pageimages` API which returns the **infobox image**.
+// This is the image Wikipedia editors curated as the canonical photo for the
+// article — much more reliable than REST summary's `lead image` which often
+// picks a random image from the article body.
+async function fetchInfoboxImage(title: string, lang: "en" | "de"): Promise<string | null> {
   try {
-    const res = await fetch(
-      `https://${lang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`,
-      {
-        headers: { "User-Agent": "Tripora24/1.0 (https://www.tripora24.com)" },
-        next: { revalidate: 60 * 60 * 24 * 30 }, // 30 days
-      },
-    )
+    const url = `https://${lang}.wikipedia.org/w/api.php?action=query&prop=pageimages&piprop=original%7Cthumbnail&pithumbsize=1024&format=json&origin=*&redirects=1&titles=${encodeURIComponent(title)}`
+    const res = await fetch(url, {
+      headers: { "User-Agent": "Tripora24/1.0 (https://www.tripora24.com)" },
+      next: { revalidate: 60 * 60 * 24 * 30 }, // 30 days
+    })
     if (!res.ok) return null
-    const data: WikiSummary = await res.json()
-    if (data.type === "disambiguation") return null
-    // Prefer thumbnail (always sized) over originalimage (full-size, can be 10+ MB)
-    const src = data.thumbnail?.source || data.originalimage?.source
-    if (!src) return null
-    if (BAD_IMAGE_RE.test(src)) return null
-    return toThumb(src, 1024)
+    const data = (await res.json()) as PageImagesResponse
+    const pages = data.query?.pages
+    if (!pages) return null
+    for (const page of Object.values(pages)) {
+      if (page.missing !== undefined) continue
+      const src = page.thumbnail?.source || page.original?.source
+      if (!src) continue
+      if (BAD_IMAGE_RE.test(src)) continue
+      return toThumb(src, 1024)
+    }
+    return null
   } catch {
     return null
   }
 }
 
 async function tryTitles(titles: string[]): Promise<string | null> {
-  // English first (better lead images for cities), then German
+  // English first (better infobox photos for cities), then German
   for (const lang of ["en", "de"] as const) {
     for (const title of titles) {
-      const url = await fetchWikiThumb(title, lang)
+      const url = await fetchInfoboxImage(title, lang)
       if (url) return url
     }
   }
