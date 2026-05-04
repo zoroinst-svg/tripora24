@@ -65,15 +65,22 @@ export function buildKiwiUrl(params: {
   returnDate?: string
   adults?: number
 }): string {
-  const { origin, destination, departureDate = "", returnDate = "", adults = 1 } = params
-  const path = returnDate
-    ? `${origin}/${destination}/${departureDate}_${returnDate}`
-    : `${origin}/${destination}/${departureDate}`
-  return withParams(`https://www.kiwi.com/de/search/results/${path}`, {
-    adults: String(adults),
-    affilid: KIWI_AFFILID,
-    sub1: sub("kiwi"),
-  })
+  const { origin, destination, departureDate, returnDate, adults = 1 } = params
+  // Use Kiwi's /deep endpoint — it accepts IATA codes via query params and
+  // server-side-redirects to the canonical /de/search/results/<citySlug>/<citySlug>/...
+  // URL with the correct city slugs Kiwi requires (e.g. "flughafen-frankfurt-hahn-...").
+  // Hardcoded /search/results/HHN/BCN/... URLs render an empty search form.
+  const url = new URL("https://www.kiwi.com/deep")
+  url.searchParams.set("affilid", KIWI_AFFILID)
+  url.searchParams.set("sub1", sub("kiwi"))
+  url.searchParams.set("lang", "de")
+  url.searchParams.set("pageName", "searchResults")
+  url.searchParams.set("origin", origin)
+  url.searchParams.set("destination", destination)
+  if (departureDate) url.searchParams.set("outboundDate", departureDate)
+  if (returnDate) url.searchParams.set("inboundDate", returnDate)
+  url.searchParams.set("adults", String(adults))
+  return url.toString()
 }
 
 // ──────────────────────────────────────────────────────────
