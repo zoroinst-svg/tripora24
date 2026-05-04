@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { PlaneIcon, ArrowRightIcon, ClockIcon, CalendarIcon, GlobeIcon, CarIcon, ShieldIcon } from "@/components/ui/icons"
 import { BreadcrumbJsonLd, FlightRouteJsonLd } from "@/components/seo/JsonLd"
-import { buildGetYourGuideUrl, buildKiwiTaxiUrl, buildDiscoverCarsUrl, buildAirHelpUrl } from "@/lib/apis/partners"
+import { buildGetYourGuideUrl, buildKiwiTaxiUrl, buildDiscoverCarsUrl, buildAirHelpUrl, buildKiwiUrl, buildAviasalesUrl } from "@/lib/apis/partners"
 
 export const dynamicParams = false
 export const revalidate = 86400
@@ -56,10 +56,8 @@ export default async function RoutePage({ params }: { params: Promise<{ route: s
   const hasData = stats.flightsFound > 0
 
   const providers = [
-    { name: "Skyscanner", link: `https://www.skyscanner.de/transport/fluege/${from.toLowerCase()}/${to.toLowerCase()}/`, badge: "Empfohlen" },
-    { name: "Aviasales", link: `https://www.aviasales.com/search/${from}1${to}1?marker=tripora24`, badge: null },
-    { name: "Google Flights", link: `https://www.google.com/flights?q=${from}+to+${to}`, badge: null },
-    { name: "Kiwi.com", link: `https://www.kiwi.com/de/search/results/${fromCity}-${fromCountry}/${toCity}-${toCountry}`, badge: null },
+    { name: "Aviasales", link: buildAviasalesUrl({ origin: from, destination: to }), badge: "Empfohlen" },
+    { name: "Kiwi.com", link: buildKiwiUrl({ origin: from, destination: to }), badge: null },
   ]
 
   const priceRange = hasData && stats.cheapestPrice && stats.maxPrice

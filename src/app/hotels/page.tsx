@@ -31,47 +31,15 @@ const POPULAR_CITIES_BY_COUNTRY: Record<string, string[]> = {
 
 function buildBookingLinks(destination: string, checkIn?: string, checkOut?: string) {
   const marker = "717690"
-  const params = checkIn && checkOut ? `&checkin=${checkIn}&checkout=${checkOut}` : ""
+  const dateParams = checkIn && checkOut ? `&checkIn=${checkIn}&checkOut=${checkOut}` : ""
   return [
     {
-      name: "Booking.com",
-      rating: 4.7,
-      reviews: 180000,
-      badge: "Bester Anbieter",
-      link: `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(destination)}${params}&aid=2311236`,
-      features: ["Kostenlose Stornierung", "Jetzt buchen, später zahlen"],
-    },
-    {
       name: "Hotellook",
-      rating: 4.2,
-      reviews: 15000,
-      badge: null,
-      link: `https://search.hotellook.com/hotels?destination=${encodeURIComponent(destination)}&marker=${marker}`,
-      features: ["Preisvergleich", "30+ Anbieter"],
-    },
-    {
-      name: "Hotels.com",
-      rating: 4.4,
-      reviews: 95000,
-      badge: null,
-      link: `https://www.hotels.com/search.do?q-destination=${encodeURIComponent(destination)}`,
-      features: ["Sammle 10 Nächte = 1 gratis"],
-    },
-    {
-      name: "Agoda",
-      rating: 4.3,
-      reviews: 42000,
-      badge: null,
-      link: `https://www.agoda.com/search?city=${encodeURIComponent(destination)}`,
-      features: ["Oft günstigste Preise"],
-    },
-    {
-      name: "Trivago",
-      rating: 4.1,
-      reviews: 28000,
-      badge: null,
-      link: `https://www.trivago.de/de/odr?search=${encodeURIComponent(destination)}`,
-      features: ["400+ Buchungsseiten"],
+      rating: 4.5,
+      reviews: 90000,
+      badge: "Preisvergleich",
+      link: `https://search.hotellook.com/hotels?destination=${encodeURIComponent(destination)}${dateParams}&marker=${marker}`,
+      features: ["Vergleicht Booking.com, Agoda, Hotels.com & mehr", "30+ Anbieter in einer Suche", "Bestpreis-Garantie"],
     },
   ]
 }

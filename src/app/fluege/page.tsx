@@ -12,6 +12,7 @@ import { PlaneIcon, SearchIcon, SpinnerIcon, AlertIcon, ArrowRightIcon, ChevronL
 import Link from "next/link"
 import { formatPrice } from "@/lib/utils"
 import { useI18n } from "@/lib/i18n/context"
+import { buildKiwiUrl } from "@/lib/apis/partners"
 
 function isCountryCode(c: string): boolean {
   return c.length === 2 && /^[A-Z]{2}$/.test(c) && isKnownCountry(c)
@@ -261,21 +262,24 @@ function ExploreCities({ flights, countryCode, countryName, month, onSelectCity,
           <Card className="p-8 text-center">
             <PlaneIcon className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
             <h3 className="text-lg font-semibold mb-2">Für {countryName} haben wir aktuell keine gecachten Preise</h3>
-            <p className="text-muted-foreground text-sm mb-6">Suche direkt bei unseren Partnern nach verfügbaren Flügen:</p>
+            <p className="text-muted-foreground text-sm mb-6">Such direkt nach Flügen — wir leiten dich zu Aviasales oder Kiwi:</p>
             <div className="flex flex-wrap gap-3 justify-center">
-              {[
-                { name: "Skyscanner", url: `https://www.skyscanner.de/transport/fluge/de/${countryCode.toLowerCase()}/` },
-                { name: "Google Flights", url: `https://www.google.com/travel/flights?q=Flights+to+${encodeURIComponent(countryName)}+from+Germany` },
-                { name: "Kayak", url: `https://www.kayak.de/flights/DE-${countryCode}/` },
-                { name: "Kiwi.com", url: `https://www.kiwi.com/de/search/results/germany/${countryName.toLowerCase()}/` },
-              ].map((p) => (
-                <a key={p.name} href={p.url} target="_blank" rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-card border rounded-xl text-sm font-semibold hover:shadow-md hover:-translate-y-0.5 transition-all cursor-pointer"
-                >
-                  {p.name}
-                  <ArrowRightIcon className="h-3 w-3" />
-                </a>
-              ))}
+              <Link
+                href={`/fluege?from=DE&to=${countryCode}`}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-semibold hover:opacity-90 transition-all cursor-pointer"
+              >
+                Bei Tripora24 suchen
+                <ArrowRightIcon className="h-3 w-3" />
+              </Link>
+              <a
+                href={buildKiwiUrl({ origin: "DE", destination: countryCode })}
+                target="_blank"
+                rel="noopener sponsored nofollow"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-card border rounded-xl text-sm font-semibold hover:shadow-md hover:-translate-y-0.5 transition-all cursor-pointer"
+              >
+                Kiwi.com
+                <ArrowRightIcon className="h-3 w-3" />
+              </a>
             </div>
           </Card>
         </div>
